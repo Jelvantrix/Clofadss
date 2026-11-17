@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CartItem, Language, translations, formatPrice } from '../types';
 import { BrandLogo } from './BrandLogo';
 import { PaymentIcons } from './PaymentIcons';
 import { X, Check, ArrowRight, ShieldCheck } from 'lucide-react';
-import { createStoreOrder } from '../supabase/dbService';
-import { supabase } from '../supabase/config';
 import { lockBodyScroll, unlockBodyScroll } from '../utils/scrollLock';
 
 interface CheckoutModalProps {
@@ -56,15 +54,78 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [paymentMethod, setPaymentMethod] = useState<'bank' | 'mobilepay' | 'klarna' | 'card' | 'applepay'>('card');
   const [selectedBank, setSelectedBank] = useState('OP');
   const [createdOrderNumber, setCreatedOrderNumber] = useState('');
+  const [confirmedTotal, setConfirmedTotal] = useState<number | null>(null);
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
   const [orderError, setOrderError] = useState<string | null>(null);
+  const [shippingConfig, setShippingConfig] = useState<{
+    shippingRates: Array<{
+      id?: string;
+      method?: string;
+      name?: { en?: string; fi?: string };
+      price?: number;
+      freeOver?: number;
+    }>;
+    freeShippingThreshold: number;
+    vatRate: number;
+  } | null>(null);
+  const idempotencyKeyRef = useRef('');
+
+  // One stable key per cart attempt. Retrying a failed request returns the
+  // original order instead of charging or reserving stock twice.
+  useEffect(() => {
+    if (isOpen) {
+      idempotencyKeyRef.current = '';
+      setConfirmedTotal(null);
+      fetch('/api/commerce/config')
+        .then((response) => (response.ok ? response.json() : null))
+        .then((payload) => {
+          if (payload && Array.isArray(payload.shippingRates)) {
+            setShippingConfig({
+              shippingRates: payload.shippingRates,
+              freeShippingThreshold: Number(payload.freeShippingThreshold) || 0,
+              vatRate: Number(payload.vatRate) || 24,
+            });
+          }
+        })
+        .catch(() => {
+          // The checkout still uses the published fallback rates below. The
+          // server remains authoritative at confirmation.
+        });
+    }
+  }, [isOpen, items]);
 
   const subtotal = items.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
     0
   );
 
-  const shippingCost = shippingMethod === 'whiteglove' ? 12.0 : (subtotal >= 100 ? 0 : 4.9);
+  const shippingLabelFor = (method: 'express' | 'standard' | 'whiteglove'): string =>
+    method === 'whiteglove'
+      ? 'White Glove Delivery'
+      : method === 'standard'
+        ? 'Standard Delivery'
+        : 'Express Courier Tracked';
+
+  const shippingCostFor = (method: 'express' | 'standard' | 'whiteglove'): number => {
+    const label = shippingLabelFor(method).toLowerCase();
+    const rate = shippingConfig?.shippingRates.find((entry) =>
+      [entry.method, entry.id, entry.name?.en, entry.name?.fi]
+        .filter(Boolean)
+        .some((value) => String(value).trim().toLowerCase() === label)
+    );
+    if (rate) {
+      const freeOver = Number(rate.freeOver ?? shippingConfig?.freeShippingThreshold ?? 0);
+      if (freeOver > 0 && subtotal >= freeOver) return 0;
+      return Math.max(0, Number(rate.price) || 0);
+    }
+    if (method !== 'whiteglove') {
+      const freeOver = shippingConfig?.freeShippingThreshold || 100;
+      if (subtotal >= freeOver) return 0;
+    }
+    return method === 'whiteglove' ? 12.0 : 4.9;
+  };
+
+  const shippingCost = shippingCostFor(shippingMethod);
   const total = subtotal + shippingCost;
 
   if (!isOpen) return null;
@@ -80,70 +141,69 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     setIsSubmittingOrder(true);
     setOrderError(null);
     try {
-      const res = await createStoreOrder({
-        customer: {
-          id: email.toLowerCase().replace(/[^a-z0-9]/g, '_'),
-          email: email.trim(),
-          name: `${firstName.trim()} ${lastName.trim()}`,
-          phone: phone.trim(),
-          address: {
-            street: street.trim(),
-            postalCode: postalCode.trim(),
-            city: city.trim(),
-            country: 'Finland',
-          },
+      if (!idempotencyKeyRef.current) {
+        idempotencyKeyRef.current = crypto.randomUUID();
+      }
+      const shippingLabel = shippingLabelFor(shippingMethod);
+      const visitorId = localStorage.getItem('zejesh_visitor_id') || undefined;
+      const sessionId = sessionStorage.getItem('zejesh_session_id') || undefined;
+      const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+      const utm = {
+        source: params?.get('utm_source') || undefined,
+        medium: params?.get('utm_medium') || undefined,
+        campaign: params?.get('utm_campaign') || undefined,
+      };
+      const channel = utm.source || 'website';
+
+      const response = await fetch('/api/commerce/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Idempotency-Key': idempotencyKeyRef.current,
         },
-        items: items.map((it) => ({
-          productId: it.product.id,
-          productNr: it.product.plateNumber || it.product.nr || 'Nº 001',
-          productName: it.product.name.en || it.product.name.fi || 'Archival Garment',
-          size: it.size,
-          quantity: it.quantity,
-          price: it.product.price,
-        })),
-        totals: {
-          subtotal,
-          shipping: shippingCost,
-          vat: +(subtotal * 0.24 / 1.24).toFixed(2),
-          discount: 0,
-          total,
-        },
-        status: 'paid',
-        shippingMethod: shippingMethod === 'whiteglove' ? 'White Glove Delivery' : 'Express Courier Tracked',
-        timeline: [
-          {
-            at: new Date().toISOString(),
-            status: 'paid',
-            note: `Verified checkout payment received via ${paymentMethod.toUpperCase()}`,
-            by: 'Storefront Checkout',
+        body: JSON.stringify({
+          customer: {
+            email: email.trim(),
+            name: `${firstName.trim()} ${lastName.trim()}`,
+            phone: phone.trim(),
+            address: {
+              street: street.trim(),
+              postalCode: postalCode.trim(),
+              city: city.trim(),
+              country: 'Finland',
+            },
           },
-        ],
-        createdAt: new Date().toISOString(),
+          items: items.map((it) => ({
+            productId: it.product.id,
+            size: it.size,
+            quantity: it.quantity,
+          })),
+          shippingMethod: shippingLabel,
+          paymentMethod,
+          channel,
+          attribution: { visitorId, sessionId, utm },
+          discountCode: undefined,
+          consentBasis: 'contract',
+        }),
       });
 
-      if (!res?.id) {
-        throw new Error('No order reference was returned.');
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || !payload?.order?.id) {
+        throw new Error(payload?.error || 'No order reference was returned.');
       }
 
-      // Read the row back so the receipt only ever shows a number the database holds.
-      const { data: stored, error: readError } = await supabase
-        .from('orders')
-        .select('id, number')
-        .eq('id', res.id)
-        .maybeSingle();
-
-      if (readError || !stored?.id) {
-        throw new Error('The order could not be confirmed in the database.');
-      }
-
-      setCreatedOrderNumber(stored.number || res.number || stored.id);
+      const orderTotalMinor = Number(payload.order.totals?.totalMinor);
+      setConfirmedTotal(Number.isFinite(orderTotalMinor) ? orderTotalMinor / 100 : total);
+      setCreatedOrderNumber(payload.order.number || payload.order.id);
       setStep(3);
       onOrderSuccess();
     } catch (err) {
       // Honest failure: stay on the payment step and never show a fake receipt.
       console.error('Order placement error:', err);
       setOrderError(
-        'Your order could not be placed — no order was created. Please check your connection and try again.'
+        err instanceof Error && err.message
+          ? err.message
+          : 'Your order could not be placed — no order was created. Please check your connection and try again.'
       );
     } finally {
       setIsSubmittingOrder(false);
@@ -358,7 +418,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                         Direct service point or automated parcel locker
                       </span>
                     </span>
-                    <span className="price">{subtotal >= 100 ? '€0.00' : '€4.90'}</span>
+                    <span className="price">{formatPrice(shippingCostFor('express'))}</span>
                   </label>
 
                   <label className={optionRowClass(shippingMethod === 'standard')}>
@@ -382,7 +442,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                         Eco-certified delivery across Europe
                       </span>
                     </span>
-                    <span className="price">{subtotal >= 100 ? '€0.00' : '€4.90'}</span>
+                    <span className="price">{formatPrice(shippingCostFor('standard'))}</span>
                   </label>
 
                   <label className={optionRowClass(shippingMethod === 'whiteglove')}>
@@ -406,7 +466,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                         Scheduled courier directly to your door
                       </span>
                     </span>
-                    <span className="price">€12.00</span>
+                    <span className="price">{formatPrice(shippingCostFor('whiteglove'))}</span>
                   </label>
                 </div>
               </div>
@@ -541,7 +601,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <div className="space-y-3">
                 <span className="label text-ink-a45">Step 03 — Confirmation</span>
                 <h3 className="font-display font-light text-[clamp(34px,5vw,56px)] leading-[1.02] tracking-tight">
-                  Order <em>confirmed</em>
+                  Order <em>received</em>
                 </h3>
               </div>
 
@@ -571,16 +631,16 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   </dd>
                 </div>
                 <div className="flex items-baseline justify-between gap-6 py-3 border-b border-ink-a18">
-                  <dt className="label text-ink-a45">Total Charged</dt>
+                  <dt className="label text-ink-a45">Order Total</dt>
                   <dd className="font-display font-light text-3xl text-right">
-                    {formatPrice(total)}
-                    <span className="label block mt-1 text-ink-a45">incl. 24% VAT</span>
+                    {formatPrice(confirmedTotal ?? total)}
+                    <span className="label block mt-1 text-ink-a45">incl. {shippingConfig?.vatRate ?? 24}% VAT</span>
                   </dd>
                 </div>
               </dl>
 
               <p className="body-copy text-ink-a45 leading-relaxed">
-                Thank you for your acquisition. A formal dossier and tracking code will be dispatched to {email}.
+                Your order is recorded and awaiting payment confirmation. Payment instructions will be sent to {email}. No card is charged by this site.
               </p>
 
               <div className="pt-2">

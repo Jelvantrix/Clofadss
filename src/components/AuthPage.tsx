@@ -332,9 +332,21 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   };
 
   return (
-    <div className="storefront min-h-screen bg-paper text-ink selection:bg-ink selection:text-paper flex flex-col">
+    <div
+      className={
+        adminIntent
+          ? 'admin-scope admin-auth-page'
+          : 'storefront min-h-screen bg-paper text-ink selection:bg-ink selection:text-paper flex flex-col'
+      }
+    >
       {/* Top bar — hairline only */}
-      <header className="w-full border-b border-ink-a18 px-5 sm:px-10 lg:px-16 h-16 sm:h-20 flex items-center justify-between shrink-0 z-20">
+      <header
+        className={
+          adminIntent
+            ? 'admin-auth-bar'
+            : 'w-full border-b border-ink-a18 px-5 sm:px-10 lg:px-16 h-16 sm:h-20 flex items-center justify-between shrink-0 z-20'
+        }
+      >
         <button
           type="button"
           onClick={onNavigateHome}
@@ -350,8 +362,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       </header>
 
       {/* Split portal: editorial statement left, form right */}
-      <main className="flex-1 grid grid-cols-1 lg:grid-cols-2">
-        <section className="relative hidden overflow-hidden bg-ink text-paper lg:flex lg:flex-col lg:px-16 lg:py-16">
+      <main className={adminIntent ? 'admin-auth-main' : 'flex-1 grid grid-cols-1 lg:grid-cols-2'}>
+        {!adminIntent && (
+          <section className="relative hidden overflow-hidden bg-ink text-paper lg:flex lg:flex-col lg:px-16 lg:py-16">
           <img
             src={editorialAt(0)}
             alt="Zejesh campaign still"
@@ -397,9 +410,16 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             </div>
           </div>
         </section>
+        )}
 
-        <section className="flex items-center justify-center px-5 sm:px-10 lg:px-16 py-12 sm:py-16">
-          <div className="w-full max-w-md">
+        <section
+          className={
+            adminIntent
+              ? 'admin-auth-panel'
+              : 'flex items-center justify-center px-5 sm:px-10 lg:px-16 py-12 sm:py-16'
+          }
+        >
+          <div className={adminIntent ? 'admin-auth-card' : 'w-full max-w-md'}>
             {/* Password recovery session opened from the email link */}
             {passwordRecovery ? (
               <div className="space-y-8 animate-fadeIn">
@@ -434,7 +454,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-0 bottom-0 h-[44px] w-[44px] flex items-center justify-center text-ink-a45 hover:text-ink cursor-pointer"
+                          className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center text-ink-a45 hover:text-ink cursor-pointer"
                           aria-label={showPassword ? 'Hide password' : 'Show password'}
                         >
                           {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -890,7 +910,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-0 bottom-0 h-[44px] w-[44px] flex items-center justify-center text-ink-a45 hover:text-ink cursor-pointer"
+                          className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center text-ink-a45 hover:text-ink cursor-pointer"
                           aria-label={showPassword ? 'Hide password' : 'Show password'}
                         >
                           {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -979,7 +999,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-0 bottom-0 h-[44px] w-[44px] flex items-center justify-center text-ink-a45 hover:text-ink cursor-pointer"
+                          className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center text-ink-a45 hover:text-ink cursor-pointer"
                           aria-label={showPassword ? 'Hide password' : 'Show password'}
                         >
                           {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -1105,6 +1125,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           </div>
         </section>
       </main>
+
+      {adminIntent && (
+        <footer className="admin-auth-foot">
+          <span>Zejesh Atelier</span>
+          <span>Helsinki · Porto</span>
+        </footer>
+      )}
     </div>
   );
 };

@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Product } from '../../types';
 import { Download, AlertCircle, Check, Search, ArrowUp, ArrowDown } from 'lucide-react';
 import { useAuth } from '../../supabase/AuthContext';
-import { supabase } from '../../supabase/config';
-import { logAuditEvent } from '../../supabase/dbService';
+import { bosFetch } from '../../bos/client';
 
 interface AdminInventoryViewProps {
   products: Product[];
@@ -15,6 +14,8 @@ export const AdminInventoryView: React.FC<AdminInventoryViewProps> = ({ products
   const [searchQuery, setSearchQuery] = useState('');
   const [stockFilter, setStockFilter] = useState<'all' | 'low' | 'out'>('all');
   const [updatingSku, setUpdatingSku] = useState<string | null>(null);
+  const [stockError, setStockError] = useState<string | null>(null);
+  const [stockNotice, setStockNotice] = useState<string | null>(null);
 
   // Flatten variants with parent product info
   const allVariants = products.flatMap((p) =>
@@ -53,39 +54,33 @@ export const AdminInventoryView: React.FC<AdminInventoryViewProps> = ({ products
     variantsList: any[]
   ) => {
     if (!isEditor) return;
-    const newStock = Math.max(0, currentStock + delta);
     setUpdatingSku(sku);
+    setStockError(null);
+    setStockNotice(null);
 
     try {
-      const updatedVariants = variantsList.map((v) => (v.sku === sku ? { ...v, stock: newStock } : v));
-      const totalStock = updatedVariants.reduce((a, b) => a + (Number(b.stock) || 0), 0);
-
-      await supabase
-        .from('products')
-        .update({
-          variants: updatedVariants,
-          stock: totalStock,
-          updatedAt: new Date().toISOString(),
-        })
-        .eq('id', productId);
-
-      // Write immutable inventory log
-      const logId = `inv-${Date.now()}-${sku}`;
-      await supabase.from('inventoryLog').upsert({
-        id: logId,
-        productId,
-        sku,
-        delta,
-        resultingStock: newStock,
-        by: adminProfile?.name || 'admin',
-        at: new Date().toISOString(),
-        reason: 'manual_quick_adjustment',
-      });
-
-      await logAuditEvent(adminProfile?.name || 'admin', 'adjust_inventory', sku, { delta, newStock });
+      const result = await bosFetch<{ onHand: number; replayed: boolean }>(
+        'inventory',
+        'adjust',
+        {
+          productId,
+          sku,
+          delta,
+          reason: 'manual_quick_adjustment',
+          locationId: 'main',
+          idempotencyKey: `inventory-adjust:${sku}:${delta}:${crypto.randomUUID()}`,
+        }
+      );
+      setStockNotice(
+        `${sku}: ${delta > 0 ? '+' : ''}${delta} units recorded. New on-hand: ${result.onHand}.`
+      );
       onRefresh();
     } catch (err) {
-      console.warn('Stock adjustment error:', err);
+      setStockError(
+        err instanceof Error
+          ? err.message
+          : 'The stock adjustment failed. No ledger movement was recorded.'
+      );
     } finally {
       setUpdatingSku(null);
     }
@@ -136,6 +131,17 @@ export const AdminInventoryView: React.FC<AdminInventoryViewProps> = ({ products
           <span>Export Inventory CSV</span>
         </button>
       </div>
+
+      {(stockError || stockNotice) && (
+        <div
+          role={stockError ? 'alert' : 'status'}
+          className={`border px-4 py-3 text-[12px] font-light ${
+            stockError ? 'border-red-400/40 text-red-300' : 'border-paper-a18 text-paper-a45'
+          }`}
+        >
+          {stockError || stockNotice}
+        </div>
+      )}
 
       {/* Summary Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-paper-a18 border border-paper-a18 text-[13px]">

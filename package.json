@@ -10,6 +10,7 @@
     "preview": "cross-env NODE_ENV=production vite preview",
     "clean": "rm -rf dist server.js",
     "check:no-seed": "node scripts/check-no-seed.mjs",
+    "bos:jobs": "tsx scripts/bos-jobs.ts",
     "test": "vitest run",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",

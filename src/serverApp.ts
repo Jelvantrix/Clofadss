@@ -82,6 +82,7 @@ import {
   updateBackupDrill,
 } from './controlPlane/hardening';
 import { loadIntelligence } from './controlPlane/intelligence';
+import { createBosRouter, createCheckoutRouter } from './bos';
 import type { ControlCheckResult } from './controlPlane/types';
 import type { AccountAddress, AccountOverview, Order } from './types';
 
@@ -701,7 +702,15 @@ export function createExpressApp(): express.Express {
     }
   });
 
+  // Public commerce surface. Checkout is authenticated by a verified product
+  // catalogue and idempotency key, not by an admin session.
+  app.use('/api/commerce', createCheckoutRouter());
+
   app.use('/api', requireAdmin);
+
+  // Authenticated BOS dispatcher. Every action is declared in the registry with
+  // an explicit permission; the dispatcher never reflects over object keys.
+  app.use('/api/bos', createBosRouter());
 
   // -------------------------------------------------------------------------
   // Control plane — phase 0

@@ -5,7 +5,8 @@
    ========================================================================== */
 
 .ops-ui{--bg:#f6f6f6;--s:#fff;--ink:#000;--i2:#2e2e2e;--i3:#6a6a6a;--i4:#9b9b9b;--l1:#ececec;--l2:#dcdcdc;--l3:#c2c2c2;--f1:#f3f3f3;--f2:#e8e8e8}
-.ops-ui,.ops-ui *{box-sizing:border-box;margin:0;padding:0}
+.ops-ui,.ops-ui *{box-sizing:border-box}
+.ops-ui :where(h1,h2,h3,h4,h5,h6,p,ul,ol,figure,blockquote){margin:0}
 .ops-ui{-webkit-text-size-adjust:100%}
 .ops-ui{font:13.5px/1.5 'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
 .ops-ui button,.ops-ui input,.ops-ui select{font:inherit;color:inherit}

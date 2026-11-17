@@ -31,9 +31,9 @@ import { AdminAtlasView } from './atlas/AdminAtlasView';
 import { AdminControlPlaneView } from './control/AdminControlPlaneView';
 import { AdminSuggestionsView } from './suggestions/AdminSuggestionsView';
 import { useStorefrontData } from '../context/StorefrontDataContext';
-import { OperationsShell, type OpsNavGroup } from './operations/OperationsShell';
-import { OpsOverview, OPS_REGIONS, type OpsRange, type OpsCurrency } from './operations/OpsOverview';
-import './operations/operations.css';
+import { PremiumShell } from './PremiumShell';
+import { OpsOverview } from './operations/OpsOverview';
+import type { OpsNavGroup } from './operations/OperationsShell';
 
 interface AdminLayoutProps {
   onBackToStorefront: () => void;
@@ -61,11 +61,6 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   const [currentView, setCurrentView] = useState<string>('dashboard');
 
   // Operations console filters
-  const [opsRange, setOpsRange] = useState<OpsRange>('30D');
-  const [opsRegion, setOpsRegion] = useState<string>('Global');
-  const [opsCurrency, setOpsCurrency] = useState<OpsCurrency>('EUR');
-
-  // Security & Terminal Gate State.
   const [isTerminalLocked, setIsTerminalLocked] = useState<boolean>(() => {
     const unlockedTs = sessionStorage.getItem('zejesh_sec_unlocked_ts');
     if (unlockedTs) {
@@ -306,26 +301,19 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         onExitToStore={onBackToStorefront}
       />
 
-      <div className="ops-ui">
-        <OperationsShell
-          groups={navGroups}
+        <PremiumShell
+          title="ZEJESH Operations"
+          sub="Live console · 19 screens"
+          navItems={navItems.map(({ id, label, badge }) => ({ id, label, badge }))}
           currentView={currentView}
           onNavigate={setCurrentView}
-          range={opsRange}
-          onRangeChange={setOpsRange}
-          region={opsRegion}
-          regions={[...OPS_REGIONS]}
-          onRegionChange={setOpsRegion}
-          currency={opsCurrency}
-          onCurrencyChange={setOpsCurrency}
-          onOpenPalette={() => setIsCommandPaletteOpen(true)}
-          onOpenNotifications={() => setIsNotificationsOpen(true)}
-          onLock={handleLockTerminalNow}
-          onBackToStorefront={onBackToStorefront}
-          operatorName={adminProfile?.name || adminProfile?.email || 'Operator'}
-          role={adminProfile?.role || role || 'Administrator'}
-          initials={operatorInitials}
+          userName={adminProfile?.name || adminProfile?.email || 'Operator'}
+          userRole={adminProfile?.role || role || 'Administrator'}
+          userEmail={adminProfile?.email || 'operator@zejesh.local'}
+          userInitials={operatorInitials}
+          onLogout={() => { signOut?.(); }}
           notificationCount={activeOrderCount}
+          onOpenPalette={() => setIsCommandPaletteOpen(true)}
         >
           {currentView === 'dashboard' && (
             <OpsOverview
@@ -334,9 +322,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               customers={customers}
               waitlist={waitlist}
               collections={collections}
-              range={opsRange}
-              region={opsRegion}
-              currency={opsCurrency}
+              range="30D"
+              region="Global"
+              currency="EUR"
               liveVisitors={liveVisitors}
               onNavigate={setCurrentView}
             />
@@ -435,8 +423,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           {currentView === 'settings' && legacy(
             <AdminSettingsView settings={settings} onRefresh={() => {}} />
           )}
-        </OperationsShell>
-      </div>
+        </PremiumShell>
 
       {/* Global Command Palette (Cmd+K) */}
       <div className="admin-scope">

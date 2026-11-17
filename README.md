@@ -288,3 +288,31 @@ Verification status:
 - `npm start` smoke-tested: SPA routes, 401/400/413/429 responses all verified
 - No Firebase imports, no hardcoded credentials
 - Service role key verified absent from the browser bundle (build-time sentinel test)
+
+---
+
+## 7. Clothing Brand Operating System (BOS)
+
+The admin is being extended with a server-authoritative BOS layer. The 19
+existing screens are preserved; new behaviour is exposed through one
+permissioned dispatcher at `/api/bos` and a narrow public checkout at
+`/api/commerce`.
+
+- Architecture and database contract: [`docs/BOS-IMPLEMENTATION.md`](docs/BOS-IMPLEMENTATION.md)
+- Phase 1 discovery and defect register: [`docs/PHASE-1-DISCOVERY.md`](docs/PHASE-1-DISCOVERY.md)
+- SQL work in progress: `docs/migration-drafts/` (not applied by
+  `supabase db push` until moved into `supabase/migrations/`)
+
+Server-side guarantees already implemented in code:
+
+- integer minor-unit money and VAT-inclusive order totals;
+- idempotent checkout and payments;
+- an explicit order state machine with stock effects;
+- an immutable inventory ledger with reservations;
+- server-side discount evaluation and usage limits;
+- hash-chained audit for every privileged mutation;
+- recorded-only analytics, finance, RFM, cohorts and supplier performance.
+
+Migrations are intentionally pending. Until they are applied, endpoints that
+touch new tables fail closed with `schema_unavailable`; no action reports a
+success that the database did not record.

@@ -187,7 +187,7 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[120] bg-ink text-paper flex flex-col justify-between p-4 sm:p-8 md:p-10 select-none animate-fadeIn">
+    <div className="admin-scope admin-gate-page fixed inset-0 z-[120] bg-ink text-paper flex flex-col justify-between p-4 sm:p-8 md:p-10 select-none animate-fadeIn">
       {/* Top security header */}
       <div className="flex items-center justify-between pb-4 border-b border-paper-a18 max-w-5xl w-full mx-auto">
         <div className="flex items-center gap-3">

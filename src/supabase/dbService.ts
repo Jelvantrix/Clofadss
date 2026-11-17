@@ -618,11 +618,16 @@ export async function joinWaitlist(
     const { error } = await supabase.from('waitlist').insert({
       id,
       email,
-      target: target || 'newsletter',
+      dropId: target && target !== 'newsletter' ? target : null,
       source: source || 'storefront',
       createdAt: new Date().toISOString(),
+      invited: false,
     });
-    return !error;
+    if (error) {
+      console.warn('joinWaitlist error:', error.message);
+      return false;
+    }
+    return true;
   } catch {
     return false;
   }

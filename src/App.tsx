@@ -351,8 +351,10 @@ function StorefrontApp() {
   if (route.type === 'admin') {
     if (authLoading) {
       return (
-        <div className="storefront min-h-screen bg-paper text-ink flex items-center justify-center">
-          <span className="label text-ink-a45">Verifying session...</span>
+        <div className="admin-scope admin-auth-page">
+          <div className="admin-auth-main">
+            <span className="label text-ink-a45">Verifying session…</span>
+          </div>
         </div>
       );
     }
