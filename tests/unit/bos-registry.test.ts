@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BOS_SYSTEMS, systemManifest, validateRegistry } from '../../src/bos/registry';
+import { BOS_ACTION_CATALOG, BOS_ACTION_COUNT } from '../../src/bos/actionCatalog';
 
 describe('BOS registry', () => {
   it('contains exactly the 19 existing admin surfaces', () => {
@@ -56,5 +57,25 @@ describe('BOS registry', () => {
     const manifest = systemManifest();
     expect(manifest).toHaveLength(19);
     expect(JSON.stringify(manifest)).not.toContain('handler');
+  });
+
+  it('keeps the client-safe action catalog in sync with the dispatcher', () => {
+    const manifest = systemManifest();
+    const expected = manifest.map((system) => ({
+      systemId: system.id,
+      systemName: system.name,
+      screen: system.screen,
+      index: system.index,
+      actions: system.actions.map((action) => ({
+        name: action.action,
+        permission: action.permission,
+        description: action.description,
+      })),
+    }));
+    expect(BOS_ACTION_CATALOG).toEqual(expected);
+    expect(BOS_ACTION_COUNT).toBe(
+      manifest.reduce((total, system) => total + system.actions.length, 0)
+    );
+    expect(BOS_ACTION_COUNT).toBeGreaterThan(0);
   });
 });

@@ -19,7 +19,7 @@ export const AdminSettingsView: React.FC<AdminSettingsViewProps> = ({
     const existing = { ...settings };
     if (!existing.storeInfo) {
       existing.storeInfo = {
-        name: 'ZEJESH',
+        name: 'CLOFADS',
         email: 'huxaifa0fficial@gmail.com',
         dispatchEmail: 'dispatch@zejesh.com',
         conciergeEmail: 'concierge@zejesh.com',
@@ -121,7 +121,7 @@ export const AdminSettingsView: React.FC<AdminSettingsViewProps> = ({
     const jsonStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data, null, 2));
     const dlAnchor = document.createElement('a');
     dlAnchor.setAttribute('href', jsonStr);
-    dlAnchor.setAttribute('download', `zejesh_backup_${Date.now()}.json`);
+    dlAnchor.setAttribute('download', `clofads_backup_${Date.now()}.json`);
     dlAnchor.click();
   };
 
@@ -197,7 +197,7 @@ export const AdminSettingsView: React.FC<AdminSettingsViewProps> = ({
             <label className="field-label">Brand Name</label>
             <input
               type="text"
-              value={formData.storeInfo?.name || 'ZEJESH'}
+              value={formData.storeInfo?.name || 'CLOFADS'}
               onChange={(e) =>
                 setFormData({
                   ...formData,

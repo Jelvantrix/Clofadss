@@ -526,15 +526,15 @@ export const atelierJournal: JournalArticle[] = [
     },
     body: {
       fi: [
-        'Zejesh alkoi yhdestä kysymyksestä: miltä vaate tuntuisi, jos sitä ei olisi suunniteltu myytäväksi seuraavalla viikolla? Vastaus löytyi kylmästä valosta ja pitkistä mittasuhteista.',
+        'Clofads alkoi yhdestä kysymyksestä: miltä vaate tuntuisi, jos sitä ei olisi suunniteltu myytäväksi seuraavalla viikolla? Vastaus löytyi kylmästä valosta ja pitkistä mittasuhteista.',
         'Hiljaisuus ei ole tyhjyyttä. Se on tarkkaa tilaa kankaan ja vartalon välissä. Jokainen sauma on piirretty sitä varten, että vaate katoaa käyttäjänsä liikkeisiin.',
       ],
       en: [
-        'Zejesh began with one question: what would a garment feel like if it had not been designed to be sold again next week? The answer arrived through cold light and long proportion.',
+        'Clofads began with one question: what would a garment feel like if it had not been designed to be sold again next week? The answer arrived through cold light and long proportion.',
         'Silence is not emptiness. It is precise space between cloth and body. Every seam is drawn so that the garment can disappear into the movement of its wearer.',
       ],
       sv: [
-        'Zejesh började med en fråga: hur skulle ett plagg kännas om det inte designats för att säljas igen nästa vecka? Svaret kom genom kallt ljus och långa proportioner.',
+        'Clofads började med en fråga: hur skulle ett plagg kännas om det inte designats för att säljas igen nästa vecka? Svaret kom genom kallt ljus och långa proportioner.',
         'Tystnad är inte tomhet. Det är exakt utrymme mellan tyg och kropp. Varje söm är ritad så att plagget kan försvinna i bärarens rörelse.',
       ],
     },

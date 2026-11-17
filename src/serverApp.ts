@@ -455,10 +455,9 @@ export function createExpressApp(): express.Express {
 
   app.use(parseJson);
 
-  app.use((req, res, next) => {
+  app.use((_req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-    res.setHeader('X-Frame-Options', 'DENY');
     next();
   });
 
@@ -1514,13 +1513,69 @@ export function createExpressApp(): express.Express {
     }
   });
 
-  const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY,
-    httpOptions: {
-      headers: {
-        'User-Agent': 'aistudio-build',
+  const getGeminiClient = (): GoogleGenAI | null => {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) return null;
+    return new GoogleGenAI({
+      apiKey,
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        },
       },
-    },
+    });
+  };
+
+  // POST /api/advisor/analyze
+  app.post('/api/advisor/analyze', async (req, res) => {
+    try {
+      const ai = getGeminiClient();
+      if (!ai) {
+        return res.status(503).json({ error: 'GEMINI_API_KEY is not configured on the server.' });
+      }
+      const { summaryData } = req.body || {};
+      if (!summaryData || typeof summaryData !== 'object') {
+        return res.status(400).json({ error: 'summaryData object is required.' });
+      }
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: `You are a senior retail strategist for Clofads, a quiet Nordic luxury fashion atelier.
+Analyze this real studio data: ${JSON.stringify(summaryData)}.
+Return a JSON array of strategic recommendations based strictly on the provided real data with fields: title, priority (high/medium/low), category, evidence, recommendation, expectedImpact, effort.
+Strictly valid JSON only.`,
+      });
+      const text = response.text || '';
+      const cleaned = text.replace(/```json|```/g, '').trim();
+      const parsed = JSON.parse(cleaned);
+      return res.json({ insights: Array.isArray(parsed) ? parsed : [] });
+    } catch (err: any) {
+      console.error('Error running advisor analysis:', err);
+      return res.status(500).json({ error: err?.message || 'Advisor analysis failed.' });
+    }
+  });
+
+  // POST /api/advisor/chat
+  app.post('/api/advisor/chat', async (req, res) => {
+    try {
+      const ai = getGeminiClient();
+      if (!ai) {
+        return res.status(503).json({ error: 'GEMINI_API_KEY is not configured on the server.' });
+      }
+      const { contextSummary, userText } = req.body || {};
+      if (typeof userText !== 'string' || !userText.trim()) {
+        return res.status(400).json({ error: 'userText is required.' });
+      }
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: `${String(contextSummary || '')}\nUser question: ${userText.trim()}\nProvide a concise strategic answer grounded strictly in these real numbers. If there is insufficient data to answer, state clearly that there is not enough data.`,
+      });
+      return res.json({
+        text: response.text || 'The model returned no content. Please rephrase your question and ask again.',
+      });
+    } catch (err: any) {
+      console.error('Error running advisor chat:', err);
+      return res.status(500).json({ error: err?.message || 'Advisor chat failed.' });
+    }
   });
 
   const operationsCache = new Map<
@@ -1539,6 +1594,11 @@ export function createExpressApp(): express.Express {
     rateLimit(UPLOAD_RATE_MAX, 'video-gen'),
     async (req, res) => {
       try {
+        const ai = getGeminiClient();
+        if (!ai) {
+          return res.status(503).json({ error: 'Server misconfigured: missing GEMINI_API_KEY' });
+        }
+
         const { imageBase64, prompt, aspectRatio = '16:9' } = req.body;
 
         if (!imageBase64) {
@@ -1632,6 +1692,11 @@ export function createExpressApp(): express.Express {
           error: stored.error,
           restored: true,
         });
+      }
+
+      const ai = getGeminiClient();
+      if (!ai) {
+        return res.status(503).json({ error: 'Server misconfigured: missing GEMINI_API_KEY' });
       }
 
       let operation = new GenerateVideosOperation();

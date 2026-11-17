@@ -172,7 +172,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
             className="flex min-h-[44px] items-center font-display text-[22px] tracking-[0.42em]"
             aria-label="Return home"
           >
-            ZEJESH
+            CLOFADS
           </button>
         )}
 
@@ -272,7 +272,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
       </div>
 
       <div className="flex shrink-0 items-center justify-between border-t border-ink-a18 pt-4 label text-[9px] text-ink/35">
-        <span>ZEJESH Atelier</span>
+        <span>CLOFADS Atelier</span>
         <span>Helsinki · Porto</span>
       </div>
     </div>

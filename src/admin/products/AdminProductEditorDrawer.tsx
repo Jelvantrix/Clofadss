@@ -2092,7 +2092,7 @@ export const AdminProductEditorDrawer: React.FC<AdminProductEditorDrawerProps> =
  type="text"
  value={formData.seo?.title || ''}
  onChange={(e) => setFormData({ ...formData, seo: { ...formData.seo, title: e.target.value } })}
- placeholder={`${formData.name?.en || 'Piece'} | Zejesh Studio Helsinki`}
+ placeholder={`${formData.name?.en || 'Piece'} | Clofads Studio Helsinki`}
  className="w-full px-3 py-2 text-small"
  />
  </div>

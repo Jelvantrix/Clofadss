@@ -1,6 +1,6 @@
 import React from 'react';
-import { X, AlertTriangle, PackageCheck, Sparkles, Clock, ArrowRight } from 'lucide-react';
-import { Product, Order, AiInsight } from '../types';
+import { AlertTriangle, PackageCheck, Sparkles, X } from 'lucide-react';
+import { AiInsight, Order, Product } from '../types';
 
 interface AdminNotificationsModalProps {
   isOpen: boolean;
@@ -21,119 +21,147 @@ export const AdminNotificationsModal: React.FC<AdminNotificationsModalProps> = (
 }) => {
   if (!isOpen) return null;
 
-  // Derive low stock products (stock < 4)
   const lowStock = products.filter((p) => {
-    const total = p.variants ? p.variants.reduce((a, v) => a + v.stock, 0) : (p.stock || 0);
+    const total = p.variants
+      ? p.variants.reduce((a, v) => a + v.stock, 0)
+      : p.stock || 0;
     return total > 0 && total < 4;
   });
 
-  // New pending orders
-  const newOrders = orders.filter((o) => o.status === 'new' || o.status === 'paid').slice(0, 3);
+  const newOrders = orders
+    .filter((o) => o.status === 'new' || o.status === 'paid')
+    .slice(0, 3);
+
+  const totalAlerts = lowStock.length + newOrders.length + insights.length;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-start justify-end p-4 sm:p-6">
-      <div onClick={onClose} className="fixed inset-0 bg-ink/80" />
+      <div
+        onClick={onClose}
+        className="fixed inset-0 bg-black/35 backdrop-blur-[1px]"
+      />
 
-      <div className="relative w-full max-w-sm bg-ink border border-paper-a18 z-10 animate-fadeIn flex flex-col max-h-[85vh] text-[13px] font-light">
-        <div className="p-5 border-b border-paper-a18 flex items-center justify-between">
-          <div className="flex items-baseline gap-2">
-            <span className="micro-sm text-paper">Studio Notifications</span>
-            <span className="micro-sm font-mono text-paper-a45">
-              {lowStock.length + newOrders.length + insights.length}
+      <div className="relative z-10 flex max-h-[85vh] w-full max-w-sm flex-col border border-black bg-white text-[13px] text-black animate-fadeIn">
+        <div className="flex items-center justify-between border-b border-black/15 bg-[#fafafa] px-4 py-3">
+          <div className="flex items-center gap-2.5">
+            <span className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-black">
+              Studio Alerts
+            </span>
+            <span className="bg-black px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-white">
+              {totalAlerts}
             </span>
           </div>
-          <button onClick={onClose} className="p-1 text-paper-a45 hover:text-paper cursor-pointer transition-colors">
-            <X className="w-4 h-4" strokeWidth={1.4} />
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1 text-black/45 transition-colors hover:text-black"
+            aria-label="Close notifications"
+          >
+            <X className="h-4 w-4" strokeWidth={1.5} />
           </button>
         </div>
 
-        <div className="p-5 overflow-y-auto space-y-6">
-          {/* Low Stock Warnings */}
+        <div className="space-y-6 overflow-y-auto p-4">
           {lowStock.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-paper-a18">
-                <span className="flex items-center gap-2 micro-sm text-paper">
-                  <AlertTriangle className="w-3.5 h-3.5" strokeWidth={1.4} />
-                  <span>Low Stock Warning ({lowStock.length})</span>
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between border-b border-black/10 pb-2">
+                <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-[#b91c1c]">
+                  <AlertTriangle className="h-3.5 w-3.5" strokeWidth={1.5} />
+                  <span>Low Stock ({lowStock.length})</span>
                 </span>
                 <button
+                  type="button"
                   onClick={() => {
                     onNavigateView('inventory');
                     onClose();
                   }}
-                  className="micro-sm text-paper-a72 hover:text-paper transition-colors underline underline-offset-4"
+                  className="font-mono text-[10px] uppercase tracking-[0.14em] text-black/65 underline underline-offset-4 hover:text-black"
                 >
-                  View All
+                  Open Inventory
                 </button>
               </div>
-              {lowStock.slice(0, 3).map((p) => (
-                <div key={p.id} className="py-1.5">
-                  <div className="flex justify-between items-baseline">
-                    <span className="font-mono micro-sm text-paper">{p.nr}</span>
-                    <span className="micro-sm text-paper-a72">{p.stock} units remaining</span>
+              {lowStock.slice(0, 4).map((p) => (
+                <div key={p.id} className="border-b border-black/[0.06] py-1.5 last:border-b-0">
+                  <div className="flex items-baseline justify-between">
+                    <span className="font-mono text-[11px] text-black/75">{p.nr}</span>
+                    <span className="font-mono text-[11px] text-[#b91c1c]">{p.stock} units</span>
                   </div>
-                  <div className="micro-sm text-paper-a45 truncate mt-1">{p.name.en || p.name.fi}</div>
+                  <div className="mt-0.5 truncate text-[12px] text-black/60">
+                    {p.name.en || p.name.fi}
+                  </div>
                 </div>
               ))}
             </div>
           )}
 
-          {/* New Orders */}
           {newOrders.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-paper-a18">
-                <span className="flex items-center gap-2 micro-sm text-paper">
-                  <PackageCheck className="w-3.5 h-3.5" strokeWidth={1.4} />
-                  <span>New Customer Orders</span>
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between border-b border-black/10 pb-2">
+                <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-black">
+                  <PackageCheck className="h-3.5 w-3.5" strokeWidth={1.5} />
+                  <span>Open Orders</span>
                 </span>
                 <button
+                  type="button"
                   onClick={() => {
                     onNavigateView('orders');
                     onClose();
                   }}
-                  className="micro-sm text-paper-a72 hover:text-paper transition-colors underline underline-offset-4"
+                  className="font-mono text-[10px] uppercase tracking-[0.14em] text-black/65 underline underline-offset-4 hover:text-black"
                 >
-                  View All
+                  Open Orders
                 </button>
               </div>
               {newOrders.map((o) => (
-                <div key={o.id} className="py-1.5">
-                  <div className="flex justify-between items-baseline">
-                    <span className="font-mono micro-sm text-paper">{o.number}</span>
-                    <span className="font-mono micro-sm text-paper">{o.totals.total} €</span>
+                <div key={o.id} className="border-b border-black/[0.06] py-1.5 last:border-b-0">
+                  <div className="flex items-baseline justify-between">
+                    <span className="font-mono text-[11px] text-black">{o.number}</span>
+                    <span className="font-mono text-[11px] tabular-nums text-black/75">
+                      {o.totals.total} €
+                    </span>
                   </div>
-                  <div className="micro-sm text-paper-a45 truncate mt-1">{o.customer.name}</div>
+                  <div className="mt-0.5 truncate text-[12px] text-black/60">
+                    {o.customer.name}
+                  </div>
                 </div>
               ))}
             </div>
           )}
 
-          {/* AI Insights */}
           {insights.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-paper-a18">
-                <span className="flex items-center gap-2 micro-sm text-paper">
-                  <Sparkles className="w-3.5 h-3.5" strokeWidth={1.4} />
-                  <span>Advisor Recommendations</span>
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between border-b border-black/10 pb-2">
+                <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.14em] text-black">
+                  <Sparkles className="h-3.5 w-3.5" strokeWidth={1.5} />
+                  <span>Advisor Signals</span>
                 </span>
                 <button
+                  type="button"
                   onClick={() => {
                     onNavigateView('advisor');
                     onClose();
                   }}
-                  className="micro-sm text-paper-a72 hover:text-paper transition-colors underline underline-offset-4"
+                  className="font-mono text-[10px] uppercase tracking-[0.14em] text-black/65 underline underline-offset-4 hover:text-black"
                 >
-                  Explore
+                  Open Advisor
                 </button>
               </div>
               {insights.slice(0, 2).map((ins) => (
-                <div key={ins.id} className="py-1.5">
-                  <div className="micro-sm text-paper-a45">
-                    [{ins.priority} Priority]
+                <div key={ins.id} className="border-b border-black/[0.06] py-1.5 last:border-b-0">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.1em] text-black/55">
+                    {ins.priority} Priority
                   </div>
-                  <div className="text-[13px] text-paper mt-1 line-clamp-1">{ins.title}</div>
+                  <div className="mt-0.5 line-clamp-1 text-[12.5px] text-black">
+                    {ins.title}
+                  </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {totalAlerts === 0 && (
+            <div className="py-8 text-center font-mono text-[11px] uppercase tracking-[0.12em] text-black/45">
+              All queues nominal · Zero pending alerts
             </div>
           )}
         </div>

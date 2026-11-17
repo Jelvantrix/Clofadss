@@ -42,7 +42,7 @@ export const LookbookView: React.FC<LookbookViewProps> = ({
     <div className="w-full min-h-screen select-none bg-paper text-ink">
       <CinematicHero
         image={heroSrc}
-        imageAlt="Zejesh lookbook cover"
+        imageAlt="Clofads lookbook cover"
         eyebrow="A study in proportion and shadow"
         title={
           <>
@@ -122,7 +122,7 @@ export const LookbookView: React.FC<LookbookViewProps> = ({
                   ) : (
                     <img
                       src={editorialAt(3)}
-                      alt="Zejesh lookbook study"
+                      alt="Clofads lookbook study"
                       className="h-full w-full object-cover object-[center_18%] grayscale contrast-[1.08]"
                     />
                   )}

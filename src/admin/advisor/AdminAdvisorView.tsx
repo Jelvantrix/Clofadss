@@ -3,7 +3,6 @@ import { Product, DailyStat, AiInsight } from '../../types';
 import { useAuth } from '../../supabase/AuthContext';
 import { supabase } from '../../supabase/config';
 import { logAuditEvent } from '../../supabase/dbService';
-import { GoogleGenAI } from '@google/genai';
 import {
  Sparkles,
  ArrowRight,
@@ -69,118 +68,126 @@ export const AdminAdvisorView: React.FC<AdminAdvisorViewProps> = ({
  }
  };
 
- const handleAnalyzeNow = async () => {
- if (products.length === 0 && dailyStats.length === 0) {
- alert('There is not enough data in the database to generate strategic insights. Please add products and record store traffic first.');
- return;
- }
+  const getAuthHeaders = async (): Promise<Record<string, string>> => {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        headers.Authorization = `Bearer ${session.access_token}`;
+      }
+    } catch {
+      // Unauthenticated requests are rejected by the server.
+    }
+    return headers;
+  };
 
- setIsAnalyzing(true);
- try {
- const apiKey = process.env.GEMINI_API_KEY || (import.meta as any).env?.VITE_GEMINI_API_KEY;
- if (apiKey) {
- const ai = new GoogleGenAI({ apiKey });
- const summaryData = {
- productsCount: products.length,
- totalSalesVolume: dailyStats.reduce((a, s) => a + (s.revenue || 0), 0),
- ordersCount: dailyStats.reduce((a, s) => a + (s.orders || 0), 0),
- topSelling: products.slice(0, 3).map((p) => p.nr || p.name?.en),
- lowStock: products.filter((p) => p.stock < 4).map((p) => p.nr || p.name?.en),
- };
+  const handleAnalyzeNow = async () => {
+    if (products.length === 0 && dailyStats.length === 0) {
+      alert('There is not enough data in the database to generate strategic insights. Please add products and record store traffic first.');
+      return;
+    }
 
- const response = await ai.models.generateContent({
- model: 'gemini-2.5-flash',
- contents: `You are a senior retail strategist for Zejesh, a quiet Nordic luxury fashion atelier.
-Analyze this real studio data: ${JSON.stringify(summaryData)}.
-Return a JSON array of strategic recommendations based strictly on the provided real data with fields: title, priority (high/medium/low), category, evidence, recommendation, expectedImpact, effort.
-Strictly valid JSON only.`,
- });
+    setIsAnalyzing(true);
+    try {
+      const summaryData = {
+        productsCount: products.length,
+        totalSalesVolume: dailyStats.reduce((a, s) => a + (s.revenue || 0), 0),
+        ordersCount: dailyStats.reduce((a, s) => a + (s.orders || 0), 0),
+        topSelling: products.slice(0, 3).map((p) => p.nr || p.name?.en),
+        lowStock: products.filter((p) => p.stock < 4).map((p) => p.nr || p.name?.en),
+      };
 
- const text = response.text || '';
- const cleaned = text.replace(/```json|```/g, '').trim();
- const parsed = JSON.parse(cleaned);
+      const res = await fetch('/api/advisor/analyze', {
+        method: 'POST',
+        headers: await getAuthHeaders(),
+        body: JSON.stringify({ summaryData }),
+      });
 
- for (const item of parsed) {
- const id = `ins-ai-${Date.now()}-${crypto.randomUUID ? crypto.randomUUID().slice(0, 8) : Date.now().toString(36)}`;
- await supabase.from('insights').upsert({
- ...item,
- id,
- status: 'new',
- createdAt: new Date().toISOString(),
- });
- }
- }
- } catch (err) {
- console.warn('AI Advisor analysis note:', err);
- } finally {
- setIsAnalyzing(false);
- onRefresh();
- }
- };
+      if (res.ok) {
+        const data = await res.json();
+        const parsed = Array.isArray(data?.insights) ? data.insights : [];
+        for (const item of parsed) {
+          const id = `ins-ai-${Date.now()}-${crypto.randomUUID ? crypto.randomUUID().slice(0, 8) : Date.now().toString(36)}`;
+          await supabase.from('insights').upsert({
+            ...item,
+            id,
+            status: 'new',
+            createdAt: new Date().toISOString(),
+          });
+        }
+      }
+    } catch (err) {
+      console.warn('AI Advisor analysis note:', err);
+    } finally {
+      setIsAnalyzing(false);
+      onRefresh();
+    }
+  };
 
- const handleSendChat = async (e: React.FormEvent) => {
- e.preventDefault();
- if (!chatQuery.trim() || isAsking) return;
+  const handleSendChat = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatQuery.trim() || isAsking) return;
 
- const userText = chatQuery.trim();
- setChatMessages((prev) => [...prev, { sender: 'user', text: userText }]);
- setChatQuery('');
+    const userText = chatQuery.trim();
+    setChatMessages((prev) => [...prev, { sender: 'user', text: userText }]);
+    setChatQuery('');
 
- if (products.length === 0 && dailyStats.length === 0) {
- setChatMessages((prev) => [
- ...prev,
- {
- sender: 'ai',
- text: 'There is not enough data recorded in the database to answer this question. Please publish products and generate sales traffic first.',
- },
- ]);
- return;
- }
+    if (products.length === 0 && dailyStats.length === 0) {
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          sender: 'ai',
+          text: 'There is not enough data recorded in the database to answer this question. Please publish products and generate sales traffic first.',
+        },
+      ]);
+      return;
+    }
 
- setIsAsking(true);
+    setIsAsking(true);
 
- try {
- const apiKey = process.env.GEMINI_API_KEY || (import.meta as any).env?.VITE_GEMINI_API_KEY;
- const totalSales = dailyStats.reduce((a, s) => a + (s.revenue || 0), 0);
- const totalOrders = dailyStats.reduce((a, s) => a + (s.orders || 0), 0);
- const contextSummary = `Studio context: ${products.length} catalog items. Total recorded revenue: ${totalSales} €. Total orders: ${totalOrders}.`;
+    try {
+      const totalSales = dailyStats.reduce((a, s) => a + (s.revenue || 0), 0);
+      const totalOrders = dailyStats.reduce((a, s) => a + (s.orders || 0), 0);
+      const contextSummary = `Studio context: ${products.length} catalog items. Total recorded revenue: ${totalSales} €. Total orders: ${totalOrders}.`;
 
- if (apiKey) {
- const ai = new GoogleGenAI({ apiKey });
- const res = await ai.models.generateContent({
- model: 'gemini-2.5-flash',
- contents: `${contextSummary}\nUser question: ${userText}\nProvide a concise strategic answer grounded strictly in these real numbers. If there is insufficient data to answer, state clearly that there is not enough data.`,
- });
- setChatMessages((prev) => [
- ...prev,
- {
- sender: 'ai',
- text: res.text || 'The model returned no content. Please rephrase your question and ask again.',
- },
- ]);
- } else {
- setTimeout(() => {
- setChatMessages((prev) => [
- ...prev,
- {
- sender: 'ai',
- text: `Studio records show ${products.length} products and ${totalOrders} orders (${totalSales} € recorded revenue). Connect GEMINI_API_KEY for conversational strategic intelligence.`,
- },
- ]);
- }, 300);
- }
- } catch (err) {
- setChatMessages((prev) => [
- ...prev,
- {
- sender: 'ai',
- text: 'Could not complete analysis at this time. Please verify network connectivity.',
- },
- ]);
- } finally {
- setIsAsking(false);
- }
- };
+      const res = await fetch('/api/advisor/chat', {
+        method: 'POST',
+        headers: await getAuthHeaders(),
+        body: JSON.stringify({ contextSummary, userText }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setChatMessages((prev) => [
+          ...prev,
+          {
+            sender: 'ai',
+            text: data?.text || 'The model returned no content. Please rephrase your question and ask again.',
+          },
+        ]);
+      } else {
+        setChatMessages((prev) => [
+          ...prev,
+          {
+            sender: 'ai',
+            text: `Studio records show ${products.length} products and ${totalOrders} orders (${totalSales} € recorded revenue). Connect GEMINI_API_KEY on the server for conversational strategic intelligence.`,
+          },
+        ]);
+      }
+    } catch {
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          sender: 'ai',
+          text: 'Could not complete analysis at this time. Please verify network connectivity.',
+        },
+      ]);
+    } finally {
+      setIsAsking(false);
+    }
+  };
 
  return (
  <div className="space-y-8 text-[13px]">
@@ -336,7 +343,7 @@ Strictly valid JSON only.`,
  }`}
  >
  <div className="micro-sm text-paper-a45 mb-1.5">
- {msg.sender === 'user' ? 'Store Strategist' : 'Zejesh AI Engine'}
+ {msg.sender === 'user' ? 'Store Strategist' : 'Clofads AI Engine'}
  </div>
  <div>{msg.text}</div>
  </div>

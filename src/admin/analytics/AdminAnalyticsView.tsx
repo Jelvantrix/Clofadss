@@ -305,16 +305,16 @@ export const AdminAnalyticsView: React.FC<AdminAnalyticsViewProps> = ({
  return labels.map((day, i) => ({ day, placed: counts[i] }));
  }, [orders]);
 
- // Tooltip custom style
+ // Tooltip custom style (CLOFADS paper-white architectural chrome)
  const tooltipStyle = {
  backgroundColor: '#ffffff',
- border: '1px solid rgba(0,0,0,0.12)',
+ border: '1px solid rgba(0, 0, 0, 0.22)',
  borderRadius: 0,
  fontSize: 11,
  fontFamily: 'var(--font-mono-stack)',
  color: '#000000',
  boxShadow: 'none',
- letterSpacing: '0.06em',
+ letterSpacing: '0.04em',
  };
 
  const suites = [
@@ -336,7 +336,7 @@ export const AdminAnalyticsView: React.FC<AdminAnalyticsViewProps> = ({
  const encodedUri = encodeURI(csvContent);
  const link = document.createElement('a');
  link.setAttribute('href', encodedUri);
- link.setAttribute('download', `zejesh_recorded_store_data_${dateRange}.csv`);
+ link.setAttribute('download', `clofads_recorded_store_data_${dateRange}.csv`);
  link.click();
  };
 
@@ -538,15 +538,15 @@ export const AdminAnalyticsView: React.FC<AdminAnalyticsViewProps> = ({
  <AreaChart data={displayPoints} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
  <defs>
  <linearGradient id="gRev" x1="0" y1="0" x2="0" y2="1">
- <stop offset="5%" stopColor="#000000" stopOpacity={0.22} />
+ <stop offset="5%" stopColor="#000000" stopOpacity={0.14} />
  <stop offset="95%" stopColor="#000000" stopOpacity={0} />
  </linearGradient>
  </defs>
- <XAxis dataKey="day" stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
- <YAxis stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
+ <XAxis dataKey="day" stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
+ <YAxis stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
  <Tooltip contentStyle={tooltipStyle} />
- <Area type="monotone" dataKey="revenue" stroke="#000000" strokeWidth={2} fill="url(#gRev)" name="Gross Revenue (€)" />
- <Line type="monotone" dataKey="orders" stroke="#6a6a6a" strokeWidth={1.5} dot={false} strokeDasharray="3 3" name="Orders" />
+ <Area type="monotone" dataKey="revenue" stroke="#000000" strokeWidth={1.8} fill="url(#gRev)" name="Gross Revenue (€)" />
+ <Line type="monotone" dataKey="orders" stroke="#6a6a6a" strokeWidth={1.4} dot={false} strokeDasharray="3 3" name="Orders" />
  </AreaChart>
  </ResponsiveContainer>
  </div>
@@ -573,10 +573,10 @@ export const AdminAnalyticsView: React.FC<AdminAnalyticsViewProps> = ({
  <div className="h-64 w-full pt-2">
  <ResponsiveContainer width="100%" height="100%">
  <LineChart data={cumulativeSeries} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
- <XAxis dataKey="day" stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
- <YAxis stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
+ <XAxis dataKey="day" stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
+ <YAxis stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
  <Tooltip contentStyle={tooltipStyle} />
- <Line type="monotone" dataKey="cumulative" stroke="#000000" strokeWidth={2} dot={false} name="Cumulative Revenue (€)" />
+ <Line type="monotone" dataKey="cumulative" stroke="#000000" strokeWidth={1.8} dot={false} name="Cumulative Revenue (€)" />
  </LineChart>
  </ResponsiveContainer>
  </div>
@@ -612,11 +612,11 @@ export const AdminAnalyticsView: React.FC<AdminAnalyticsViewProps> = ({
  <div className="h-64 w-full pt-2">
  <ResponsiveContainer width="100%" height="100%">
  <ComposedChart data={categoryQuant} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
- <XAxis dataKey="name" stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
- <YAxis stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
+ <XAxis dataKey="name" stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
+ <YAxis stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
  <Tooltip contentStyle={tooltipStyle} />
- <Bar dataKey="stock" fill="rgba(0,0,0,0.08)" name="Stock Count" />
- <Line type="monotone" dataKey="sold" stroke="#6a6a6a" strokeWidth={2} name="Units Sold" />
+ <Bar dataKey="stock" fill="#000000" name="Stock Count" />
+ <Line type="monotone" dataKey="sold" stroke="#6a6a6a" strokeWidth={1.8} name="Units Sold" />
  </ComposedChart>
  </ResponsiveContainer>
  </div>
@@ -644,10 +644,10 @@ export const AdminAnalyticsView: React.FC<AdminAnalyticsViewProps> = ({
  <div className="h-64 w-full pt-2">
  <ResponsiveContainer width="100%" height="100%">
  <AreaChart data={displayPoints} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
- <XAxis dataKey="day" stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
- <YAxis stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
+ <XAxis dataKey="day" stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
+ <YAxis stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
  <Tooltip contentStyle={tooltipStyle} />
- <Area type="monotone" dataKey="aov" stroke="#2e2e2e" strokeWidth={2} fill="rgba(0,0,0,0.08)" fillOpacity={0.06} name="AOV Ticket (€)" />
+ <Area type="monotone" dataKey="aov" stroke="#000000" strokeWidth={1.8} fill="rgba(0,0,0,0.08)" fillOpacity={0.18} name="AOV Ticket (€)" />
  </AreaChart>
  </ResponsiveContainer>
  </div>
@@ -688,11 +688,11 @@ export const AdminAnalyticsView: React.FC<AdminAnalyticsViewProps> = ({
  <div className="h-64 w-full pt-2">
  <ResponsiveContainer width="100%" height="100%">
  <BarChart data={sizeQuant} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
- <XAxis dataKey="size" stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
- <YAxis stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
+ <XAxis dataKey="size" stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
+ <YAxis stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
  <Tooltip contentStyle={tooltipStyle} />
- <Bar dataKey="stock" fill="rgba(0,0,0,0.08)" name="Atelier In-Stock" />
- <Bar dataKey="sold" fill="rgba(0,0,0,0.18)" name="Units Sold" />
+ <Bar dataKey="stock" fill="#000000" name="Atelier In-Stock" />
+ <Bar dataKey="sold" fill="#888888" name="Units Sold" />
  </BarChart>
  </ResponsiveContainer>
  </div>
@@ -719,11 +719,11 @@ export const AdminAnalyticsView: React.FC<AdminAnalyticsViewProps> = ({
  <div className="h-64 w-full pt-2">
  <ResponsiveContainer width="100%" height="100%">
  <ScatterChart margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
- <XAxis type="number" dataKey="x" stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} name="Units Sold" />
- <YAxis type="number" dataKey="y" stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} name="Stock" />
+ <XAxis type="number" dataKey="x" stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} name="Units Sold" />
+ <YAxis type="number" dataKey="y" stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} name="Stock" />
  <ZAxis range={[60, 60]} />
  <Tooltip contentStyle={tooltipStyle} cursor={{ strokeDasharray: '3 3' }} />
- <Scatter name="Garments" data={productScatterData} fill="rgba(0,0,0,0.08)" />
+ <Scatter name="Garments" data={productScatterData} fill="#000000" />
  </ScatterChart>
  </ResponsiveContainer>
  </div>
@@ -750,10 +750,10 @@ export const AdminAnalyticsView: React.FC<AdminAnalyticsViewProps> = ({
  <div className="h-64 w-full pt-2">
  <ResponsiveContainer width="100%" height="100%">
  <BarChart data={categoryQuant} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
- <XAxis dataKey="key" stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
- <YAxis stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
+ <XAxis dataKey="key" stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
+ <YAxis stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
  <Tooltip contentStyle={tooltipStyle} />
- <Bar dataKey="turnoverRatio" fill="rgba(0,0,0,0.08)" name="Turnover Ratio" />
+ <Bar dataKey="turnoverRatio" fill="#1e40af" name="Turnover Ratio" />
  </BarChart>
  </ResponsiveContainer>
  </div>
@@ -790,10 +790,10 @@ export const AdminAnalyticsView: React.FC<AdminAnalyticsViewProps> = ({
  <div className="h-64 w-full pt-2">
  <ResponsiveContainer width="100%" height="100%">
  <BarChart data={categoryQuant} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
- <XAxis dataKey="name" stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
- <YAxis stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
+ <XAxis dataKey="name" stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
+ <YAxis stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
  <Tooltip contentStyle={tooltipStyle} />
- <Bar dataKey="capitalEur" fill="rgba(0,0,0,0.08)" name="Capital Tied (€)" />
+ <Bar dataKey="capitalEur" fill="#000000" name="Capital Tied (€)" />
  </BarChart>
  </ResponsiveContainer>
  </div>
@@ -828,10 +828,10 @@ export const AdminAnalyticsView: React.FC<AdminAnalyticsViewProps> = ({
  <div className="h-64 w-full pt-2">
  <ResponsiveContainer width="100%" height="100%">
  <AreaChart data={displayPoints} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
- <XAxis dataKey="day" stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
- <YAxis stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
+ <XAxis dataKey="day" stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
+ <YAxis stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
  <Tooltip contentStyle={tooltipStyle} />
- <Area type="monotone" dataKey="sessions" stroke="#000000" strokeWidth={2} fill="rgba(0,0,0,0.08)" fillOpacity={0.15} name="Total Sessions" />
+ <Area type="monotone" dataKey="sessions" stroke="#000000" strokeWidth={1.8} fill="rgba(0,0,0,0.08)" fillOpacity={0.18} name="Total Sessions" />
  <Line type="monotone" dataKey="orders" stroke="#6a6a6a" strokeWidth={1.5} dot={false} name="Orders Settled" />
  </AreaChart>
  </ResponsiveContainer>
@@ -859,10 +859,10 @@ export const AdminAnalyticsView: React.FC<AdminAnalyticsViewProps> = ({
  <div className="h-64 w-full pt-2">
  <ResponsiveContainer width="100%" height="100%">
  <LineChart data={rpvSeries} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
- <XAxis dataKey="day" stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
- <YAxis stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
+ <XAxis dataKey="day" stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
+ <YAxis stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
  <Tooltip contentStyle={tooltipStyle} />
- <Line type="monotone" dataKey="rpv" stroke="#2e2e2e" strokeWidth={2} dot={{ r: 2 }} name="RPV (€)" />
+ <Line type="monotone" dataKey="rpv" stroke="#000000" strokeWidth={1.8} dot={{ r: 2, fill: '#000000' }} name="RPV (€)" />
  </LineChart>
  </ResponsiveContainer>
  </div>
@@ -907,10 +907,10 @@ export const AdminAnalyticsView: React.FC<AdminAnalyticsViewProps> = ({
  <div className="h-64 w-full pt-2">
  <ResponsiveContainer width="100%" height="100%">
  <AreaChart data={ltvTiers} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
- <XAxis dataKey="tier" stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
- <YAxis stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} allowDecimals={false} />
+ <XAxis dataKey="tier" stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
+ <YAxis stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} allowDecimals={false} />
  <Tooltip contentStyle={tooltipStyle} />
- <Area type="monotone" dataKey="patrons" stroke="#6a6a6a" strokeWidth={2} fill="rgba(0,0,0,0.08)" fillOpacity={0.12} name="Customers" />
+ <Area type="monotone" dataKey="patrons" stroke="#000000" strokeWidth={1.8} fill="rgba(0,0,0,0.08)" fillOpacity={0.18} name="Customers" />
  </AreaChart>
  </ResponsiveContainer>
  </div>
@@ -988,10 +988,10 @@ export const AdminAnalyticsView: React.FC<AdminAnalyticsViewProps> = ({
  <div className="h-64 w-full pt-2">
  <ResponsiveContainer width="100%" height="100%">
  <AreaChart data={displayPoints} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
- <XAxis dataKey="day" stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
- <YAxis stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
+ <XAxis dataKey="day" stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
+ <YAxis stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
  <Tooltip contentStyle={tooltipStyle} />
- <Area type="monotone" dataKey="sessions" stroke="#000000" strokeWidth={2} fill="rgba(0,0,0,0.08)" fillOpacity={0.08} name="Sessions" />
+ <Area type="monotone" dataKey="sessions" stroke="#000000" strokeWidth={1.8} fill="rgba(0,0,0,0.08)" fillOpacity={0.18} name="Sessions" />
  </AreaChart>
  </ResponsiveContainer>
  </div>
@@ -1051,10 +1051,10 @@ export const AdminAnalyticsView: React.FC<AdminAnalyticsViewProps> = ({
  <div className="h-64 w-full pt-2">
  <ResponsiveContainer width="100%" height="100%">
  <BarChart data={discountSplit} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
- <XAxis dataKey="channel" stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
- <YAxis stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
+ <XAxis dataKey="channel" stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
+ <YAxis stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
  <Tooltip contentStyle={tooltipStyle} />
- <Bar dataKey="share" fill="rgba(0,0,0,0.08)" name="Share of Gross Volume (%)" />
+ <Bar dataKey="share" fill="#000000" name="Share of Gross Volume (%)" />
  </BarChart>
  </ResponsiveContainer>
  </div>
@@ -1141,10 +1141,10 @@ export const AdminAnalyticsView: React.FC<AdminAnalyticsViewProps> = ({
  <div className="h-64 w-full pt-2">
  <ResponsiveContainer width="100%" height="100%">
  <BarChart data={weekdayOrders} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
- <XAxis dataKey="day" stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} />
- <YAxis stroke="rgba(23,23,23,0.34)" tick={{ fontSize: 9, fill: 'rgba(23,23,23,.55)' }} tickLine={false} allowDecimals={false} />
+ <XAxis dataKey="day" stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} />
+ <YAxis stroke="rgba(0,0,0,0.18)" tick={{ fontSize: 9.5, fill: '#6a6a6a' }} tickLine={false} allowDecimals={false} />
  <Tooltip contentStyle={tooltipStyle} />
- <Bar dataKey="placed" fill="rgba(0,0,0,0.08)" name="Orders Placed" />
+ <Bar dataKey="placed" fill="#000000" name="Orders Placed" />
  </BarChart>
  </ResponsiveContainer>
  </div>

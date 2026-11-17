@@ -70,7 +70,7 @@ export const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
             transition: 'opacity 200ms linear, letter-spacing 600ms ease-out',
           }}
         >
-          ZEJESH
+          CLOFADS
         </span>
       </div>
 

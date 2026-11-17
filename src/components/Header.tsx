@@ -113,9 +113,9 @@ export const Header: React.FC<HeaderProps> = ({
           type="button"
           onClick={onNavigateHome}
           className="flex min-h-[44px] shrink-0 items-center font-display text-[19px] leading-none tracking-[0.3em] sm:text-[22px] md:text-[24px]"
-          aria-label="ZEJESH — home"
+          aria-label="CLOFADS — home"
         >
-          ZEJESH
+          CLOFADS
         </button>
 
         {/* right — services */}

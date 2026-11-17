@@ -83,7 +83,7 @@ export const StoryPage: React.FC<StoryPageProps> = ({ onBackToHome, onExploreArc
     <div className="w-full min-h-screen select-none bg-paper text-ink">
       <CinematicHero
         image={heroImage || editorialAt(0)}
-        imageAlt="Zejesh campaign still"
+        imageAlt="Clofads campaign still"
         eyebrow="Helsinki · Porto · Est. 2026"
         title={
           <>
@@ -136,7 +136,7 @@ export const StoryPage: React.FC<StoryPageProps> = ({ onBackToHome, onExploreArc
                     src={editorialAt(1)}
                     placement="archive"
                     legacyPosition="center 45%"
-                    alt="Zejesh house study"
+                    alt="Clofads house study"
                     className="h-full w-full object-cover object-[center_45%] grayscale contrast-[1.08]"
                   />
                 </div>
@@ -158,7 +158,7 @@ export const StoryPage: React.FC<StoryPageProps> = ({ onBackToHome, onExploreArc
           src={editorialAt(3)}
           placement="heroDesktop"
           legacyPosition="center 24%"
-          alt="Zejesh atelier geography"
+          alt="Clofads atelier geography"
           className="absolute inset-0 h-full w-full object-cover object-[center_24%] grayscale contrast-[1.1]"
         />
         <div
@@ -251,7 +251,7 @@ export const StoryPage: React.FC<StoryPageProps> = ({ onBackToHome, onExploreArc
           src={editorialAt(4)}
           placement="heroDesktop"
           legacyPosition="center 24%"
-          alt="Zejesh atelier interlude"
+          alt="Clofads atelier interlude"
           className="absolute inset-0 h-full w-full object-cover object-[center_24%] opacity-45 grayscale contrast-[1.15]"
         />
         <div
@@ -329,7 +329,7 @@ export const StoryPage: React.FC<StoryPageProps> = ({ onBackToHome, onExploreArc
           src={editorialAt(6)}
           placement="heroDesktop"
           legacyPosition="center 26%"
-          alt="Zejesh numbered archive"
+          alt="Clofads numbered archive"
           className="absolute inset-0 h-full w-full object-cover object-[center_26%] opacity-55 grayscale contrast-[1.1]"
         />
         <div

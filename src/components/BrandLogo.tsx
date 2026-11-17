@@ -25,12 +25,12 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
     className={`inline-flex select-none items-center justify-center text-center transition-colors duration-300 ${
       invert ? 'text-paper' : 'text-ink'
     } ${className}`}
-    aria-label="ZEJESH"
+    aria-label="CLOFADS"
   >
     <span
       className={`whitespace-nowrap pl-[0.44em] font-display font-light leading-none ${sizeStyles[size]}`}
     >
-      ZEJESH
+      CLOFADS
     </span>
   </div>
 );

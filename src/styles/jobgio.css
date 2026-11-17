@@ -1,0 +1,805 @@
+/* ==========================================================================
+   CLOFADS BOS — Jobgio-style admin surface
+   Self-contained, rounded, soft-shadow design language for the admin console.
+   Scoped under .jobgio-root so it never leaks into the storefront.
+   The existing `.admin-scope` zero-radius rules do not match these `jg-*`
+   classes, so the rounded geometry here is preserved.
+   ========================================================================== */
+
+.admin-scope .jobgio-root {
+  --jg-page: #e9e9e9;
+  --jg-surface: #ffffff;
+  --jg-surface-2: #f7f7f7;
+  --jg-surface-3: #f2f2f2;
+  --jg-ink: #0a0a0a;
+  --jg-ink-soft: #3d3d3d;
+  --jg-muted: #8c8c8c;
+  --jg-muted-2: #b3b3b3;
+  --jg-line: rgba(0, 0, 0, 0.06);
+  --jg-line-2: rgba(0, 0, 0, 0.09);
+
+  background: var(--jg-page) !important;
+  min-height: 100vh;
+  padding: 26px;
+  color: var(--jg-ink);
+}
+
+@media (max-width: 1024px) {
+  .admin-scope .jobgio-root {
+    padding: 0;
+  }
+}
+
+/* ---- App frame ---------------------------------------------------------- */
+.admin-scope .jg-app {
+  display: flex;
+  width: 100%;
+  max-width: 1720px;
+  margin: 0 auto;
+  min-height: calc(100vh - 52px);
+  background: var(--jg-surface);
+  border-radius: 34px;
+  overflow: hidden;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.16), 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 1024px) {
+  .admin-scope .jg-app {
+    border-radius: 0;
+    min-height: 100vh;
+  }
+}
+
+/* ---- Sidebar ------------------------------------------------------------ */
+.admin-scope .jg-sidebar {
+  width: 292px;
+  flex-shrink: 0;
+  background: var(--jg-surface);
+  border-right: 1px solid var(--jg-line);
+  display: flex;
+  flex-direction: column;
+  padding: 30px 20px 22px;
+  transition: width 0.2s ease;
+}
+
+.admin-scope .jg-sidebar.jg-collapsed {
+  width: 96px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.admin-scope .jg-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 10px 4px;
+  min-height: 40px;
+}
+
+.admin-scope .jg-brand-mark {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--jg-ink);
+}
+
+.admin-scope .jg-brand-name {
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--jg-ink);
+  line-height: 1;
+}
+
+.admin-scope .jg-brand-tag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--jg-muted-2);
+  margin-top: 4px;
+}
+
+.admin-scope .jg-nav {
+  margin-top: 28px;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-right: 2px;
+}
+
+.admin-scope .jg-group-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--jg-muted-2);
+  padding: 2px 14px 8px;
+}
+
+.admin-scope .jg-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-scope .jg-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px 12px;
+  border: 0;
+  background: transparent;
+  border-radius: 9999px;
+  color: var(--jg-ink-soft);
+  font-family: var(--font-ui-stack);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-scope .jg-nav-item:hover {
+  background: var(--jg-surface-2);
+  color: var(--jg-ink);
+}
+
+.admin-scope .jg-nav-item.jg-active {
+  background: var(--jg-ink);
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.16);
+}
+
+.admin-scope .jg-nav-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--jg-surface-3);
+  color: #5a5a5a;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.admin-scope .jg-nav-item.jg-active .jg-nav-icon {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+}
+
+.admin-scope .jg-nav-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-scope .jg-nav-badge {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--jg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-scope .jg-nav-item.jg-active .jg-nav-badge {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.admin-scope .jg-collapsed .jg-nav-item {
+  justify-content: center;
+  padding: 8px;
+}
+
+.admin-scope .jg-collapsed .jg-group-label {
+  text-align: center;
+  padding: 2px 0 8px;
+  letter-spacing: 0;
+  font-size: 9px;
+}
+
+/* ---- Operator footer ---------------------------------------------------- */
+.admin-scope .jg-profile {
+  margin-top: 16px;
+  padding-top: 18px;
+  border-top: 1px solid var(--jg-line);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-scope .jg-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.admin-scope .jg-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 9999px;
+  background: var(--jg-ink);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0;
+}
+
+.admin-scope .jg-avatar-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 21px;
+  height: 21px;
+  padding: 0 5px;
+  border-radius: 9999px;
+  background: var(--jg-ink);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--jg-surface);
+}
+
+.admin-scope .jg-profile-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--jg-ink);
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-scope .jg-profile-email {
+  font-size: 11.5px;
+  color: var(--jg-muted);
+  margin-top: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-scope .jg-profile-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.admin-scope .jg-mini-btn {
+  flex: 1;
+  height: 34px;
+  border-radius: 9999px;
+  border: 1px solid var(--jg-line-2);
+  background: var(--jg-surface);
+  color: var(--jg-ink-soft);
+  font-size: 11.5px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.admin-scope .jg-mini-btn:hover {
+  background: var(--jg-ink);
+  color: #ffffff;
+  border-color: var(--jg-ink);
+}
+
+/* ---- Main region -------------------------------------------------------- */
+.admin-scope .jg-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--jg-surface);
+}
+
+.admin-scope .jg-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 30px;
+  border-bottom: 1px solid var(--jg-line);
+  flex-shrink: 0;
+}
+
+.admin-scope .jg-topbar-title {
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--jg-ink);
+  letter-spacing: -0.01em;
+}
+
+.admin-scope .jg-topbar-sub {
+  font-size: 12px;
+  color: var(--jg-muted);
+  margin-top: 2px;
+}
+
+.admin-scope .jg-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-scope .jg-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 15px;
+  border-radius: 9999px;
+  border: 1px solid var(--jg-line-2);
+  background: var(--jg-surface);
+  color: var(--jg-ink-soft);
+  font-family: var(--font-ui-stack);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.admin-scope .jg-btn:hover {
+  background: var(--jg-surface-2);
+}
+
+.admin-scope .jg-btn.jg-btn-dark {
+  background: var(--jg-ink);
+  color: #ffffff;
+  border-color: var(--jg-ink);
+}
+
+.admin-scope .jg-btn.jg-btn-dark:hover {
+  background: #222222;
+}
+
+.admin-scope .jg-icon-btn {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 9999px;
+  position: relative;
+}
+
+.admin-scope .jg-dot {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: var(--jg-ink);
+}
+
+.admin-scope .jg-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 30px;
+  background: var(--jg-surface);
+}
+
+@media (max-width: 640px) {
+  .admin-scope .jg-topbar {
+    padding: 14px 18px;
+  }
+  .admin-scope .jg-content {
+    padding: 18px;
+  }
+}
+
+/* ---- Cards -------------------------------------------------------------- */
+.admin-scope .jg-card {
+  background: var(--jg-surface);
+  border-radius: 26px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+  padding: 24px;
+}
+
+.admin-scope .jg-card.jg-tight {
+  padding: 20px;
+}
+
+.admin-scope .jg-stat {
+  position: relative;
+  background: var(--jg-surface);
+  border-radius: 24px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.06);
+  padding: 22px 14px;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  text-align: center;
+}
+
+.admin-scope .jg-stat.jg-featured {
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.13);
+}
+
+.admin-scope .jg-stat-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 9999px;
+  background: var(--jg-surface-3);
+  color: var(--jg-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-scope .jg-stat.jg-featured .jg-stat-icon {
+  background: var(--jg-ink);
+  color: #ffffff;
+}
+
+.admin-scope .jg-stat-value {
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--jg-ink);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-scope .jg-stat-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--jg-muted);
+  line-height: 1.35;
+  max-width: 110px;
+}
+
+.admin-scope .jg-stat-arrow {
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  background: var(--jg-surface);
+  border: 1px solid var(--jg-line);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--jg-ink);
+  cursor: pointer;
+}
+
+.admin-scope .jg-heading {
+  font-family: var(--font-ui-stack);
+  font-size: 26px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: var(--jg-ink);
+  line-height: 1.1;
+}
+
+.admin-scope .jg-heading-sm {
+  font-family: var(--font-ui-stack);
+  font-size: 21px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  color: var(--jg-ink);
+  line-height: 1.2;
+}
+
+.admin-scope .jg-sub {
+  font-size: 13px;
+  color: var(--jg-muted);
+  margin-top: 7px;
+  line-height: 1.5;
+}
+
+/* ---- Pills -------------------------------------------------------------- */
+.admin-scope .jg-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 9999px;
+  background: var(--jg-surface-3);
+  color: #6b6b6b;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: 0;
+}
+
+.admin-scope .jg-pill.jg-green {
+  background: #e7f5ec;
+  color: #14804a;
+}
+.admin-scope .jg-pill.jg-amber {
+  background: #fdf0e3;
+  color: #b45309;
+}
+.admin-scope .jg-pill.jg-blue {
+  background: #e8effd;
+  color: #1e40af;
+}
+.admin-scope .jg-pill.jg-red {
+  background: #fdecec;
+  color: #b91c1c;
+}
+.admin-scope .jg-pill.jg-dark {
+  background: var(--jg-ink);
+  color: #ffffff;
+}
+
+/* ---- List rows (pending approvals) ------------------------------------- */
+.admin-scope .jg-list-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 2px;
+}
+
+.admin-scope .jg-list-row + .jg-list-row {
+  border-top: 1px solid var(--jg-line);
+}
+
+.admin-scope .jg-list-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: var(--jg-surface-3);
+  color: var(--jg-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.admin-scope .jg-list-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--jg-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-scope .jg-list-sub {
+  font-size: 11.5px;
+  color: var(--jg-muted);
+  margin-top: 3px;
+}
+
+/* ---- Tables ------------------------------------------------------------- */
+.admin-scope .jg-table-head {
+  display: grid;
+  align-items: center;
+  padding: 4px 20px 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--jg-muted);
+}
+
+.admin-scope .jg-row {
+  display: grid;
+  align-items: center;
+  padding: 13px 20px;
+  border-radius: 16px;
+  transition: background 0.12s ease;
+}
+
+.admin-scope .jg-row.jg-alt {
+  background: var(--jg-surface-2);
+}
+
+.admin-scope .jg-row + .jg-row {
+  margin-top: 8px;
+}
+
+.admin-scope .jg-row:hover {
+  background: var(--jg-surface-3);
+}
+
+.admin-scope .jg-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 1.5px solid #d3d3d3;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #ffffff;
+}
+
+.admin-scope .jg-check.jg-on {
+  background: var(--jg-ink);
+  border-color: var(--jg-ink);
+}
+
+.admin-scope .jg-ellipsis {
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  border: 0;
+  background: transparent;
+  color: #9a9a9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.admin-scope .jg-ellipsis:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.admin-scope .jg-cell-strong {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--jg-ink);
+}
+
+.admin-scope .jg-cell {
+  font-size: 13px;
+  color: var(--jg-ink-soft);
+}
+
+.admin-scope .jg-cell-muted {
+  font-size: 12.5px;
+  color: var(--jg-muted);
+}
+
+/* ---- Selects (override admin zero-radius) ------------------------------ */
+.admin-scope select.jg-select {
+  height: 38px !important;
+  border-radius: 9999px !important;
+  border: 1px solid var(--jg-line-2) !important;
+  background-color: var(--jg-surface) !important;
+  color: var(--jg-ink-soft) !important;
+  font-family: var(--font-ui-stack) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  padding: 0 34px 0 15px !important;
+  cursor: pointer;
+}
+
+.admin-scope .jg-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.admin-scope .jg-select-wrap .jg-select-caret {
+  position: absolute;
+  right: 13px;
+  pointer-events: none;
+  color: var(--jg-muted);
+}
+
+/* ---- Chart -------------------------------------------------------------- */
+.admin-scope .jg-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b6b6b;
+}
+
+.admin-scope .jg-legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 9999px;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.admin-scope .jg-tip {
+  background: var(--jg-ink);
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.26);
+  white-space: nowrap;
+}
+
+.admin-scope .jg-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 190px;
+  gap: 8px;
+  color: var(--jg-muted-2);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* ---- Scrollbars --------------------------------------------------------- */
+.admin-scope .jg-content::-webkit-scrollbar,
+.admin-scope .jg-nav::-webkit-scrollbar {
+  width: 8px;
+}
+.admin-scope .jg-content::-webkit-scrollbar-thumb,
+.admin-scope .jg-nav::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 9999px;
+}
+.admin-scope .jg-content::-webkit-scrollbar-track,
+.admin-scope .jg-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---- Mobile drawer ------------------------------------------------------ */
+.admin-scope .jg-mobile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+}
+
+.admin-scope .jg-mobile-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(1px);
+}
+
+.admin-scope .jg-mobile-panel {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  width: 300px;
+  max-width: 86vw;
+  background: var(--jg-surface);
+  border-right: 1px solid var(--jg-line);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.2);
+}
+
+/* ---- Toast -------------------------------------------------------------- */
+.admin-scope .jg-toast {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  z-index: 130;
+  background: var(--jg-ink);
+  color: #ffffff;
+  border-radius: 9999px;
+  padding: 12px 20px;
+  font-size: 12.5px;
+  font-weight: 500;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+}

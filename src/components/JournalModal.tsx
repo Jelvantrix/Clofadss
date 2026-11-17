@@ -89,7 +89,7 @@ export const JournalModal: React.FC<JournalModalProps> = ({ articleId, onClose, 
                   of dense wool, the serene halo of combed merino, the organic slubs of raw linen.
                 </p>
                 <p>
-                  At the core of the Zejesh ethos lies the belief in the garment as a permanent
+                  At the core of the Clofads ethos lies the belief in the garment as a permanent
                   archival accession. We do not design for the churn of seasonal schedules; we
                   execute numbered archive plates refined to endure across generations.
                 </p>

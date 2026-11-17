@@ -488,7 +488,7 @@ export const StaticPages: React.FC<StaticPageProps> = ({
               </div>
               <div className="md:col-span-8 space-y-6">
                 <p className="body-copy text-ink-a72">
-                  Zejesh was established in opposition to seasonal surplus and synthetic
+                  Clofads was established in opposition to seasonal surplus and synthetic
                   elasticity. We believe genuine luxury derives not from excessive decoration, but
                   from disciplined proportions, the innate stance of natural weaves, and
                   uncompromised comfort without petrochemical shortcuts.
@@ -500,7 +500,7 @@ export const StaticPages: React.FC<StaticPageProps> = ({
                   </p>
                 </blockquote>
                 <p className="body-copy text-ink-a72">
-                  When entering the world of Zejesh, the experience is quiet, exclusive, and
+                  When entering the world of Clofads, the experience is quiet, exclusive, and
                   meaningful. We do not chase fleeting fashion weeks; we create garments designed
                   to feel equally pristine twenty years from now.
                 </p>
@@ -592,7 +592,7 @@ export const StaticPages: React.FC<StaticPageProps> = ({
             <div className="mt-16 max-w-[880px] space-y-10 pt-4">
               <p className="body-copy text-ink-a72">
                 We operate strictly in limited batch releases with zero surplus. Furthermore, all
-                Zejesh archive coats and knitwear include complimentary restorative lifetime
+                Clofads archive coats and knitwear include complimentary restorative lifetime
                 stitching in our Helsinki atelier.
               </p>
 

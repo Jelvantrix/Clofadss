@@ -32,7 +32,7 @@ const HOUSE_FILMS: HeroFrame[] = [
     poster: '/media/campaign-01.jpg',
     mobilePoster: '/media/editorial/floral-mobile.jpg',
     isVideo: true,
-    alt: 'ZEJESH campaign film, opening frame',
+    alt: 'CLOFADS campaign film, opening frame',
     focalX: 50,
     focalY: 42,
   },
@@ -43,7 +43,7 @@ const HOUSE_FILMS: HeroFrame[] = [
     poster: '/media/campaign-02.jpg',
     mobilePoster: '/media/editorial/blue-mobile.jpg',
     isVideo: true,
-    alt: 'ZEJESH campaign film, house architecture',
+    alt: 'CLOFADS campaign film, house architecture',
     focalX: 50,
     focalY: 50,
   },
@@ -54,7 +54,7 @@ const HOUSE_FILMS: HeroFrame[] = [
     poster: '/media/campaign-03.jpg',
     mobilePoster: '/media/editorial/manphone-mobile.jpg',
     isVideo: true,
-    alt: 'ZEJESH campaign film, the pool',
+    alt: 'CLOFADS campaign film, the pool',
     focalX: 50,
     focalY: 45,
   },
@@ -65,7 +65,7 @@ const HOUSE_FILMS: HeroFrame[] = [
     poster: '/media/campaign-05.jpg',
     mobilePoster: '/media/editorial/motus-mobile.jpg',
     isVideo: true,
-    alt: 'ZEJESH campaign film, the runway',
+    alt: 'CLOFADS campaign film, the runway',
     focalX: 50,
     focalY: 50,
   },
@@ -105,7 +105,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ slides: externalSlides
           isVideo,
           poster: media?.poster || slide.poster,
           mobilePoster: slide.mobileMedia?.poster || slide.poster,
-          alt: media?.alt || slide.caption?.en || `ZEJESH campaign film ${i + 1}`,
+          alt: media?.alt || slide.caption?.en || `CLOFADS campaign film ${i + 1}`,
           focalX: media?.framing?.focalX ?? slide.focalX ?? 50,
           focalY: media?.framing?.focalY ?? slide.focalY ?? 46,
         };
@@ -147,7 +147,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ slides: externalSlides
       data-hero
       data-dark-section
       className="hero-stage"
-      aria-label="ZEJESH — campaign opening"
+      aria-label="CLOFADS — campaign opening"
     >
       <div className="hero-stage__reel">
         {frames.map((frame, i) => {

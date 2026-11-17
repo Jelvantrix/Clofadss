@@ -31,7 +31,7 @@ export const JournalPage: React.FC<JournalPageProps> = ({
     <div className="w-full min-h-screen select-none bg-paper text-ink">
       <CinematicHero
         image={cover}
-        imageAlt="Zejesh journal cover"
+        imageAlt="Clofads journal cover"
         eyebrow="The house journal · Helsinki 2026"
         title={
           <>
@@ -76,7 +76,7 @@ export const JournalPage: React.FC<JournalPageProps> = ({
             <div className="relative aspect-[2/3] overflow-hidden bg-[#111] lg:col-span-4">
               <img
                 src={editorialAt(5)}
-                alt="Zejesh atelier study"
+                alt="Clofads atelier study"
                 className="h-full w-full object-cover object-[center_20%] grayscale"
               />
             </div>

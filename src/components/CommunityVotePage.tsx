@@ -199,11 +199,11 @@ export const CommunityVotePage: React.FC<CommunityVotePageProps> = ({
     <div className="w-full min-h-screen select-none bg-paper text-ink">
       <CinematicHero
         image={editorialAt(4)}
-        imageAlt="Zejesh open ballot"
+        imageAlt="Clofads open ballot"
         eyebrow="Patron commissions · Open to the floor"
         title={
           <>
-            What Should Zejesh Craft <em className="italic">Next</em>?
+            What Should Clofads Craft <em className="italic">Next</em>?
           </>
         }
         description="Vote on patron garment concepts or submit an architectural proposal. The strongest enter pattern drafting in Helsinki and shuttle-loom weaving in Porto."
@@ -281,7 +281,7 @@ export const CommunityVotePage: React.FC<CommunityVotePageProps> = ({
                 <div className="relative aspect-[2/3] overflow-hidden bg-[#111]">
                   <img
                     src={editorialAt(5)}
-                    alt="Zejesh pattern study"
+                    alt="Clofads pattern study"
                     loading="lazy"
                     decoding="async"
                     className="h-full w-full object-cover object-[center_20%] grayscale contrast-[1.08]"
@@ -480,7 +480,7 @@ export const CommunityVotePage: React.FC<CommunityVotePageProps> = ({
       >
         <img
           src={editorialAt(3)}
-          alt="Zejesh open commission"
+          alt="Clofads open commission"
           loading="lazy"
           decoding="async"
           className="absolute inset-0 h-full w-full object-cover object-[center_26%] opacity-40 grayscale contrast-[1.15]"
@@ -514,7 +514,7 @@ export const CommunityVotePage: React.FC<CommunityVotePageProps> = ({
             <aside className="relative hidden overflow-hidden bg-black lg:block">
               <img
                 src={editorialAt(6)}
-                alt="Zejesh atelier commission"
+                alt="Clofads atelier commission"
                 className="absolute inset-0 h-full w-full object-cover object-[center_24%] grayscale contrast-[1.1]"
               />
               <div
@@ -554,7 +554,7 @@ export const CommunityVotePage: React.FC<CommunityVotePageProps> = ({
                 </div>
 
                 <p className="mt-4 body-copy text-ink-a72">
-                  Describe the garment you wish to see crafted by Zejesh. Proposals with high
+                  Describe the garment you wish to see crafted by Clofads. Proposals with high
                   community support enter pattern drafting.
                 </p>
 

@@ -357,7 +357,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         </button>
 
         <span className="label text-ink-a45">
-          {adminIntent ? 'Administrator Access' : 'Patron Access'}
+          {adminIntent ? 'CLOFADS · Administrator Access' : 'Patron Access'}
         </span>
       </header>
 
@@ -367,7 +367,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           <section className="relative hidden overflow-hidden bg-ink text-paper lg:flex lg:flex-col lg:px-16 lg:py-16">
           <img
             src={editorialAt(0)}
-            alt="Zejesh campaign still"
+            alt="Clofads campaign still"
             className="absolute inset-0 h-full w-full object-cover object-[center_18%] grayscale contrast-[1.08]"
           />
           <div
@@ -378,7 +378,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           <div className="relative z-10 flex flex-1 flex-col justify-between gap-24">
             <div className="max-w-md space-y-6 pt-10">
               <span className="label text-white/55">
-                {adminIntent ? 'Zejesh — Management Terminal' : 'Zejesh — Private Client Portal'}
+                {adminIntent ? 'Clofads — Atelier Operations' : 'Clofads — Private Client Portal'}
               </span>
               <p className="font-display font-light text-[clamp(44px,4.6vw,78px)] leading-[0.92] tracking-tight">
                 {adminIntent ? (
@@ -1117,7 +1117,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 {/* Micro footnote */}
                 <div className="pt-4">
                   <p className="label text-ink-a45">
-                    Zejesh Atelier · Helsinki · Porto
+                    Clofads Atelier · Helsinki · Porto
                   </p>
                 </div>
               </div>
@@ -1128,7 +1128,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
       {adminIntent && (
         <footer className="admin-auth-foot">
-          <span>Zejesh Atelier</span>
+          <span>Clofads Atelier</span>
           <span>Helsinki · Porto</span>
         </footer>
       )}

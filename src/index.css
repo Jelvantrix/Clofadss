@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   ZEJESH — THE LIGHT HOUSE
+   CLOFADS — THE LIGHT HOUSE
    A monochrome, cinematic design system for a modern clothing house.
    White is the room. Black is the ink. Photography is the event.
    ========================================================================== */
@@ -1740,215 +1740,157 @@ select.field option {
 }
 
 /* ==========================================================================
-   ADMIN — Operations console bridge
-   Every legacy admin screen is re-skinned to the reference operations
-   language: Instrument Sans/Serif, paper canvas, white panels, hairline
-   structure, pill controls and monochrome state. No colour accents.
+   ADMIN — CLOFADS ATELIER WORKSPACE (Website Design System)
+   White is the room (#ffffff). Black is the ink (#000000).
+   Bodoni Moda display headings, Jost geometric UI, IBM Plex Mono tabulars,
+   hairline 1px borders, sharp 0px corners.
    ========================================================================== */
 
 .admin-scope {
-  /* Console palette */
-  --admin-bg: #f6f6f6;
+  /* Palette (matches CLOFADS storefront) */
+  --admin-bg: #ffffff;
   --admin-surface: #ffffff;
+  --admin-surface-2: #fafafa;
   --admin-text: #000000;
-  --admin-muted: #6a6a6a;
-  --admin-faint: #9b9b9b;
-  --admin-line: #ececec;
-  --admin-line-2: #dcdcdc;
-  --admin-line-3: #c2c2c2;
+  --admin-muted: rgba(0, 0, 0, 0.52);
+  --admin-faint: rgba(0, 0, 0, 0.32);
+  --admin-line: rgba(0, 0, 0, 0.12);
+  --admin-line-2: rgba(0, 0, 0, 0.22);
+  --admin-line-3: rgba(0, 0, 0, 0.42);
 
-  /* Monochrome state (was blue/green/violet/amber/teal) */
-  --admin-blue: #000000;
-  --admin-indigo: #2e2e2e;
-  --admin-green: #4a4a4a;
-  --admin-teal: #6a6a6a;
-  --admin-amber: #858585;
-  --admin-red: #000000;
-  --admin-violet: #555555;
+  /* Accessible semantic telemetry accents on #ffffff */
+  --admin-blue: #1e40af;
+  --admin-indigo: #1d4ed8;
+  --admin-green: #15803d;
+  --admin-teal: #0f766e;
+  --admin-amber: #b45309;
+  --admin-red: #b91c1c;
+  --admin-violet: #4338ca;
+  --admin-yellow: #a16207;
 
-  /* Remap the storefront ink/paper tokens inside the admin */
-  --color-ink: #f6f6f6;
+  /* Map admin utility tokens to Paper-White surface & Black ink */
+  --color-ink: #ffffff;
   --color-paper: #000000;
   --color-ink-a88: rgba(255, 255, 255, 0.92);
-  --color-ink-a72: rgba(255, 255, 255, 0.82);
-  --color-ink-a64: rgba(255, 255, 255, 0.76);
-  --color-ink-a55: rgba(255, 255, 255, 0.68);
-  --color-ink-a40: rgba(255, 255, 255, 0.55);
-  --color-ink-a20: rgba(255, 255, 255, 0.34);
-  --color-ink-a14: rgba(255, 255, 255, 0.24);
-  --color-ink-a10: rgba(255, 255, 255, 0.18);
-  --color-ink-a06: rgba(255, 255, 255, 0.12);
-  --color-ink-a04: rgba(255, 255, 255, 0.08);
+  --color-ink-a72: rgba(255, 255, 255, 0.8);
+  --color-ink-a64: rgba(255, 255, 255, 0.72);
+  --color-ink-a55: rgba(255, 255, 255, 0.65);
+  --color-ink-a45: rgba(255, 255, 255, 0.56);
+  --color-ink-a40: rgba(255, 255, 255, 0.52);
+  --color-ink-a20: rgba(255, 255, 255, 0.3);
+  --color-ink-a18: rgba(255, 255, 255, 0.24);
+  --color-ink-a14: rgba(255, 255, 255, 0.18);
+  --color-ink-a10: rgba(255, 255, 255, 0.12);
+  --color-ink-a06: rgba(255, 255, 255, 0.08);
+  --color-ink-a04: rgba(255, 255, 255, 0.05);
   --color-paper-a88: rgba(0, 0, 0, 0.88);
   --color-paper-a72: rgba(0, 0, 0, 0.72);
   --color-paper-a64: rgba(0, 0, 0, 0.64);
-  --color-paper-a55: rgba(0, 0, 0, 0.55);
-  --color-paper-a45: rgba(0, 0, 0, 0.58);
-  --color-paper-a40: rgba(0, 0, 0, 0.5);
-  --color-paper-a20: rgba(0, 0, 0, 0.14);
-  --color-paper-a18: rgba(0, 0, 0, 0.085);
-  --color-paper-a14: rgba(0, 0, 0, 0.06);
-  --color-paper-a10: rgba(0, 0, 0, 0.045);
-  --color-paper-a06: rgba(0, 0, 0, 0.03);
+  --color-paper-a55: rgba(0, 0, 0, 0.56);
+  --color-paper-a45: rgba(0, 0, 0, 0.5);
+  --color-paper-a40: rgba(0, 0, 0, 0.45);
+  --color-paper-a20: rgba(0, 0, 0, 0.22);
+  --color-paper-a18: rgba(0, 0, 0, 0.14);
+  --color-paper-a14: rgba(0, 0, 0, 0.11);
+  --color-paper-a10: rgba(0, 0, 0, 0.07);
+  --color-paper-a06: rgba(0, 0, 0, 0.04);
 
-  /* Natural aliases for legacy component CSS: ink is text, paper is surface. */
+  /* Legacy CSS variable aliases */
   --ink: #000000;
   --paper: #ffffff;
   --ink-a88: rgba(0, 0, 0, 0.88);
   --ink-a72: rgba(0, 0, 0, 0.72);
   --ink-a64: rgba(0, 0, 0, 0.64);
-  --ink-a55: rgba(0, 0, 0, 0.55);
-  --ink-a45: rgba(0, 0, 0, 0.58);
-  --ink-a40: rgba(0, 0, 0, 0.5);
-  --ink-a20: rgba(0, 0, 0, 0.14);
-  --ink-a18: rgba(0, 0, 0, 0.085);
-  --ink-a14: rgba(0, 0, 0, 0.06);
-  --ink-a10: rgba(0, 0, 0, 0.045);
-  --ink-a06: rgba(0, 0, 0, 0.03);
+  --ink-a55: rgba(0, 0, 0, 0.56);
+  --ink-a45: rgba(0, 0, 0, 0.5);
+  --ink-a40: rgba(0, 0, 0, 0.45);
+  --ink-a20: rgba(0, 0, 0, 0.22);
+  --ink-a18: rgba(0, 0, 0, 0.14);
+  --ink-a14: rgba(0, 0, 0, 0.11);
+  --ink-a10: rgba(0, 0, 0, 0.07);
+  --ink-a06: rgba(0, 0, 0, 0.04);
   --paper-a88: rgba(255, 255, 255, 0.92);
-  --paper-a72: rgba(255, 255, 255, 0.82);
-  --paper-a45: rgba(255, 255, 255, 0.62);
-  --paper-a18: rgba(255, 255, 255, 0.32);
-  --paper-a06: rgba(255, 255, 255, 0.12);
+  --paper-a72: rgba(255, 255, 255, 0.8);
+  --paper-a45: rgba(255, 255, 255, 0.56);
+  --paper-a18: rgba(255, 255, 255, 0.24);
+  --paper-a06: rgba(255, 255, 255, 0.08);
 
-  /* Label / helper text used by legacy forms */
-  --font-display-stack: 'Instrument Serif', 'Times New Roman', serif;
-  --font-ui-stack: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono-stack: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+  --line: rgba(0, 0, 0, 0.12);
+  --line-invert: rgba(0, 0, 0, 0.14);
+  --font-display-stack: "Bodoni Moda", "Didot", "Times New Roman", serif;
+  --font-ui-stack: "Jost", "Helvetica Neue", Arial, sans-serif;
+  --font-mono-stack: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
-  background: #f6f6f6 !important;
+  background: #ffffff !important;
   color: #000000 !important;
   color-scheme: light;
-  font-family: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: var(--font-ui-stack);
   font-size: 13.5px;
-  line-height: 1.5;
+  font-weight: 300;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   font-variant-numeric: tabular-nums;
-
-  --line: rgba(0, 0, 0, 0.14);
-  --line-invert: rgba(255, 255, 255, 0.18);
-  --font-display-stack: 'Instrument Serif', 'Times New Roman', serif;
-  --font-ui-stack: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono-stack: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
-}
-
-.admin-scope * {
-  font-family: inherit;
-}
-
-.admin-scope .font-mono,
-.admin-scope code,
-.admin-scope pre,
-.admin-scope kbd {
-  font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace !important;
-  letter-spacing: 0 !important;
-}
-
-/* ---- Page titles: Instrument Serif, reference scale ---------------------- */
-.admin-scope h1 {
-  font-family: 'Instrument Serif', 'Times New Roman', serif !important;
-  font-weight: 400 !important;
-  font-size: 46px !important;
-  line-height: 1 !important;
-  letter-spacing: -0.01em !important;
-  text-transform: none !important;
-  color: #000000 !important;
-}
-
-.admin-scope h2 {
-  font-family: 'Instrument Sans', system-ui, sans-serif !important;
-  font-weight: 600 !important;
-  font-size: 14.5px !important;
-  line-height: 1.3 !important;
-  letter-spacing: 0 !important;
-  text-transform: none !important;
-  color: #000000 !important;
-}
-
-.admin-scope h3 {
-  font-family: 'Instrument Sans', system-ui, sans-serif !important;
-  font-weight: 600 !important;
-  font-size: 14.5px !important;
-  line-height: 1.3 !important;
-  letter-spacing: 0 !important;
-  text-transform: none !important;
-  color: #000000 !important;
-}
-
-.admin-scope h4 {
-  font-family: 'Instrument Sans', system-ui, sans-serif !important;
-  font-weight: 600 !important;
-  font-size: 13px !important;
-  letter-spacing: 0 !important;
-  text-transform: none !important;
-}
-
-.admin-scope h5,
-.admin-scope h6 {
-  font-family: 'Instrument Sans', system-ui, sans-serif !important;
-  font-weight: 600 !important;
-  letter-spacing: 0 !important;
-  text-transform: none !important;
-}
-
-.admin-scope h1 em,
-.admin-scope h2 em,
-.admin-scope h3 em {
-  font-style: normal !important;
 }
 
 .admin-scope .font-display,
 .admin-scope .font-serif,
 .admin-scope .text-display,
 .admin-scope .text-title {
-  font-family: 'Instrument Sans', system-ui, sans-serif !important;
-  font-weight: 500 !important;
-  letter-spacing: 0 !important;
-  text-transform: none !important;
-  color: #000000 !important;
-}
-
-/* Serif is reserved for display-scale type, exactly as the reference uses it:
-   page titles, KPI values and drawer headings — never row names or labels. */
-.admin-scope .font-display[class*="text-[40px]"],
-.admin-scope .font-display[class*="text-[38px]"],
-.admin-scope .font-display[class*="text-[36px]"],
-.admin-scope .font-display[class*="text-[34px]"],
-.admin-scope .font-display[class*="text-[32px]"],
-.admin-scope .font-display[class*="text-[30px]"],
-.admin-scope .font-display[class*="text-[28px]"],
-.admin-scope .font-display[class*="text-[24px]"],
-.admin-scope .font-display[class*="text-[clamp"],
-.admin-scope .font-serif[class*="text-[40px]"],
-.admin-scope .font-serif[class*="text-[38px]"],
-.admin-scope .font-serif[class*="text-[clamp"],
-.admin-scope .text-display {
-  font-family: 'Instrument Serif', 'Times New Roman', serif !important;
+  font-family: var(--font-display-stack) !important;
   font-weight: 400 !important;
-  letter-spacing: -0.01em !important;
+  letter-spacing: -0.02em;
+}
+
+.admin-scope .font-mono,
+.admin-scope code,
+.admin-scope pre,
+.admin-scope kbd {
+  font-family: var(--font-mono-stack) !important;
+  letter-spacing: 0 !important;
+}
+
+/* ---- Editorial & Clean Hierarchy Typography ------------------------------ */
+.admin-scope h1 {
+  font-family: var(--font-display-stack) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.025em !important;
   color: #000000 !important;
 }
 
-/* Small type: quiet documentation, not tracked uppercase chrome */
+.admin-scope h2 {
+  font-family: var(--font-display-stack) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.015em !important;
+  color: #000000 !important;
+}
+
+.admin-scope h3 {
+  font-family: var(--font-ui-stack) !important;
+  font-weight: 400 !important;
+  color: #000000 !important;
+}
+
+.admin-scope h1 em,
+.admin-scope h2 em,
+.admin-scope h3 em {
+  font-style: italic !important;
+}
+
+/* Technical & Metadata Micro Labels */
 .admin-scope .micro,
 .admin-scope .micro-sm,
 .admin-scope .edge-label,
-.admin-scope .text-small,
 .admin-scope .label {
-  font-family: 'Instrument Sans', system-ui, sans-serif !important;
-  font-size: 11.5px !important;
-  letter-spacing: 0 !important;
-  text-transform: none !important;
+  font-family: var(--font-mono-stack) !important;
+  font-size: 10.5px !important;
+  letter-spacing: 0.14em !important;
   font-weight: 400 !important;
 }
 
 .admin-scope .text-small {
+  font-family: var(--font-ui-stack);
   font-size: 13px !important;
-}
-
-/* The reference never uses uppercase chrome. */
-.admin-scope .uppercase {
-  text-transform: none !important;
+  letter-spacing: 0 !important;
 }
 
 .admin-scope .text-paper-a18,
@@ -1956,158 +1898,153 @@ select.field option {
 .admin-scope .text-paper-a14,
 .admin-scope .text-paper-a10,
 .admin-scope .text-paper-a06 {
-  color: #9b9b9b !important;
+  color: rgba(0, 0, 0, 0.36) !important;
 }
 
-/* Legacy micro-chrome was tracked uppercase at 8–10px; the reference uses
-   quiet 11px sentence case instead. */
-.admin-scope [class*="tracking-["] {
-  letter-spacing: 0 !important;
+.admin-scope .text-paper-a45,
+.admin-scope .text-ink-a45 {
+  color: rgba(0, 0, 0, 0.54) !important;
 }
 
-.admin-scope [class*="text-[8px]"],
-.admin-scope [class*="text-[9px]"],
-.admin-scope [class*="text-[10px]"] {
-  font-size: 11px !important;
+.admin-scope .text-paper-a72,
+.admin-scope .text-ink-a72 {
+  color: rgba(0, 0, 0, 0.74) !important;
 }
 
-.admin-scope header,
-.admin-scope nav {
-  background-color: transparent !important;
+/* Modal Backdrop Veils (overlay screens using bg-ink/80 or bg-ink/85) */
+.admin-scope .fixed.inset-0[class*="bg-ink/"] {
+  background-color: rgba(0, 0, 0, 0.36) !important;
+  backdrop-filter: blur(2px);
 }
 
-.admin-scope a:hover,
-.admin-scope button:hover {
-  opacity: 1;
+/* ---- Architectural Zero-Radius Geometry ---------------------------------- */
+.admin-scope [class*="rounded-lg"],
+.admin-scope [class*="rounded-xl"],
+.admin-scope [class*="rounded-md"],
+.admin-scope [class*="rounded-sm"],
+.admin-scope [class~="rounded"],
+.admin-scope [class~="rounded-full"]:not([class~="w-1"]):not([class~="w-1.5"]):not([class~="w-2"]):not([class~="h-1"]):not([class~="h-1.5"]):not([class~="h-2"]) {
+  border-radius: 0 !important;
 }
 
-/* ---- Controls ------------------------------------------------------------ */
+/* ---- Inputs & Select Fields ---------------------------------------------- */
 .admin-scope .field {
   width: 100%;
-  height: 34px;
-  min-height: 34px;
+  height: 36px;
+  min-height: 36px;
   background: #ffffff !important;
-  border: 1px solid var(--admin-line-2) !important;
-  border-radius: 8px !important;
+  border: 1px solid rgba(0, 0, 0, 0.18) !important;
+  border-radius: 0 !important;
   padding: 0 12px !important;
-  font-family: 'Instrument Sans', system-ui, sans-serif !important;
-  font-size: 13.5px !important;
+  font-family: var(--font-ui-stack) !important;
+  font-size: 13px !important;
   font-weight: 400 !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
   color: #000000 !important;
   outline: none;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 .admin-scope textarea.field {
   height: auto;
-  min-height: 92px;
+  min-height: 88px;
   padding: 10px 12px !important;
-  line-height: 1.55;
+  line-height: 1.5;
 }
 
 .admin-scope .field::placeholder {
-  font-family: 'Instrument Sans', system-ui, sans-serif !important;
-  font-size: 13px !important;
+  font-family: var(--font-ui-stack) !important;
+  font-size: 12.5px !important;
   letter-spacing: 0 !important;
-  text-transform: none !important;
-  color: #9b9b9b !important;
+  color: rgba(0, 0, 0, 0.38) !important;
 }
 
 .admin-scope .field:focus {
   border-color: #000000 !important;
-  background: #ffffff !important;
+  background: #fafafa !important;
 }
 
-/* Inputs with a leading icon keep room for it. */
 .admin-scope .field[class*="pl-6"],
 .admin-scope .field[class*="pl-7"] {
-  padding-left: 2.4rem !important;
+  padding-left: 2.2rem !important;
 }
 
 .admin-scope .field[class*="pl-8"] {
-  padding-left: 2.6rem !important;
+  padding-left: 2.4rem !important;
 }
 
 .admin-scope .field[class*="pl-9"],
 .admin-scope .field[class*="pl-10"],
 .admin-scope .field[class*="pl-11"] {
-  padding-left: 2.9rem !important;
+  padding-left: 2.7rem !important;
 }
 
 .admin-scope .field[class*="pl-12"] {
-  padding-left: 3.25rem !important;
+  padding-left: 3rem !important;
 }
 
 .admin-scope .field-label {
   display: block;
   margin-bottom: 6px;
-  font-family: 'Instrument Sans', system-ui, sans-serif !important;
-  font-size: 11.5px !important;
+  font-family: var(--font-mono-stack) !important;
+  font-size: 10.5px !important;
   font-weight: 400 !important;
-  letter-spacing: 0 !important;
-  text-transform: none !important;
-  color: #6a6a6a !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  color: rgba(0, 0, 0, 0.56) !important;
 }
 
 .admin-scope .field-error {
-  border-color: #000000 !important;
-  border-bottom: 1px dashed currentColor !important;
+  border-color: #b91c1c !important;
 }
 
 .admin-scope .field-error-message {
-  color: #6a6a6a !important;
-  font-size: 11.5px !important;
-  letter-spacing: 0 !important;
+  color: #b91c1c !important;
+  font-size: 11px !important;
 }
 
-/* Raw form controls in legacy drawers/forms inherit the same reference box. */
-.admin-scope input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='range']):not([type='color']):not(.field),
-.admin-scope select:not(.field),
+.admin-scope input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='range']):not([type='color']):not(.field):not(.bos-sr),
+.admin-scope select:not(.field):not(.bos-select),
 .admin-scope textarea:not(.field) {
   background: #ffffff !important;
-  border: 1px solid var(--admin-line-2) !important;
-  border-radius: 8px !important;
+  border: 1px solid rgba(0, 0, 0, 0.18) !important;
+  border-radius: 0 !important;
   color: #000000 !important;
-  font-family: 'Instrument Sans', system-ui, sans-serif !important;
-  font-size: 13.5px !important;
+  font-family: var(--font-ui-stack) !important;
+  font-size: 13px !important;
   letter-spacing: 0 !important;
   outline: none;
 }
 
-.admin-scope input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='range']):not([type='color']):not(.field),
-.admin-scope select:not(.field) {
-  height: 34px !important;
+.admin-scope input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='range']):not([type='color']):not(.field):not(.bos-sr),
+.admin-scope select:not(.field):not(.bos-select) {
+  height: 36px !important;
   padding: 0 12px !important;
 }
 
 .admin-scope textarea:not(.field) {
-  min-height: 92px;
+  min-height: 88px;
   padding: 10px 12px !important;
-  line-height: 1.55;
+  line-height: 1.5;
 }
 
-.admin-scope .tracking-wider,
-.admin-scope .tracking-widest,
-.admin-scope .tracking-wide {
-  letter-spacing: 0 !important;
-}
-
-.admin-scope select.field {
+.admin-scope select.field,
+.admin-scope select {
   appearance: none;
   padding-right: 28px !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%23000000' stroke-width='1.6'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E") !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%23000000' stroke-width='1.4'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E") !important;
   background-repeat: no-repeat !important;
-  background-position: right 11px center !important;
+  background-position: right 10px center !important;
   cursor: pointer;
 }
 
-.admin-scope select.field option {
+.admin-scope select option {
   background: #ffffff !important;
   color: #000000 !important;
 }
 
+/* ---- Buttons ------------------------------------------------------------- */
 .admin-scope .btn,
 .admin-scope .btn-primary,
 .admin-scope .btn-ink,
@@ -2115,18 +2052,18 @@ select.field option {
 .admin-scope .btn-ghost,
 .admin-scope .btn-ghost-ink,
 .admin-scope .btn-white {
-  min-height: 34px !important;
-  height: 34px;
-  padding: 0 15px !important;
-  border: 1px solid var(--admin-line-2) !important;
-  border-radius: 99px !important;
+  min-height: 36px !important;
+  height: 36px;
+  padding: 0 16px !important;
+  border: 1px solid rgba(0, 0, 0, 0.2) !important;
+  border-radius: 0 !important;
   background: #ffffff !important;
   color: #000000 !important;
-  font-family: 'Instrument Sans', system-ui, sans-serif !important;
-  font-size: 13.5px !important;
+  font-family: var(--font-mono-stack) !important;
+  font-size: 10.5px !important;
   font-weight: 400 !important;
-  letter-spacing: 0 !important;
-  text-transform: none !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
   gap: 8px !important;
   display: inline-flex;
   align-items: center;
@@ -2150,6 +2087,8 @@ select.field option {
 
 .admin-scope .btn:hover {
   border-color: #000000 !important;
+  background: #fafafa !important;
+  color: #000000 !important;
 }
 
 .admin-scope .btn-primary,
@@ -2161,8 +2100,8 @@ select.field option {
 
 .admin-scope .btn-primary:hover,
 .admin-scope .btn-ink:hover {
-  background: #2a2a2a !important;
-  border-color: #2a2a2a !important;
+  background: #1a1a1a !important;
+  border-color: #1a1a1a !important;
   color: #ffffff !important;
 }
 
@@ -2171,7 +2110,7 @@ select.field option {
 .admin-scope .btn-ghost-ink,
 .admin-scope .btn-white {
   background: #ffffff !important;
-  border-color: var(--admin-line-2) !important;
+  border-color: rgba(0, 0, 0, 0.18) !important;
   color: #000000 !important;
 }
 
@@ -2180,45 +2119,50 @@ select.field option {
 .admin-scope .btn-ghost-ink:hover,
 .admin-scope .btn-white:hover {
   border-color: #000000 !important;
-  color: #000000 !important;
+  background: #000000 !important;
+  color: #ffffff !important;
 }
 
 .admin-scope .btn-sm {
-  height: 28px;
-  min-height: 28px !important;
+  height: 30px;
+  min-height: 30px !important;
   padding: 0 12px !important;
-  font-size: 12.5px !important;
+  font-size: 10px !important;
 }
 
 .admin-scope .btn-text {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: 'Instrument Sans', system-ui, sans-serif !important;
-  font-size: 13px !important;
+  font-family: var(--font-mono-stack) !important;
+  font-size: 10.5px !important;
   font-weight: 400 !important;
-  letter-spacing: 0 !important;
-  text-transform: none !important;
-  color: #000000 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  color: rgba(0, 0, 0, 0.78) !important;
   background: none !important;
   border: 0 !important;
   padding: 0 !important;
 }
 
 .admin-scope .btn-text:hover {
+  color: #000000 !important;
   text-decoration: underline;
-  text-underline-offset: 3px;
+  text-underline-offset: 4px;
 }
 
 .admin-scope .btn:disabled,
 .admin-scope .btn[disabled] {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: default;
 }
 
+/* Inverted Selected State (bg-paper + text-ink => Solid Black fill, Pure White ink) */
 .admin-scope button[class~="bg-paper"][class~="text-ink"],
-.admin-scope a[class~="bg-paper"][class~="text-ink"] {
+.admin-scope a[class~="bg-paper"][class~="text-ink"],
+.admin-scope span[class~="bg-paper"][class~="text-ink"] {
   background-color: #000000 !important;
+  border-color: #000000 !important;
   color: #ffffff !important;
 }
 
@@ -2228,57 +2172,37 @@ select.field option {
   border-color: #000000 !important;
 }
 
-/* ---- Panels -------------------------------------------------------------- */
-/* A full hairline border marks a panel; give it the reference paper card. */
+/* ---- Clean Architectural Cards & Hairline Dividers ----------------------- */
 .admin-scope [class~="border"][class~="border-paper-a18"] {
-  background: #ffffff;
-  border-color: var(--admin-line) !important;
-  border-radius: 8px;
+  border-color: rgba(0, 0, 0, 0.13) !important;
+  border-radius: 0 !important;
 }
 
-.admin-scope [class~="border"][class~="border-paper-a20"] {
-  border-color: var(--admin-line-2) !important;
+.admin-scope div[class~="border"][class~="bg-paper"]:not([class~="text-ink"]),
+.admin-scope section[class~="border"][class~="bg-paper"]:not([class~="text-ink"]),
+.admin-scope aside[class~="bg-paper"]:not([class~="text-ink"]),
+.admin-scope form[class~="bg-paper"]:not([class~="text-ink"]) {
+  background-color: #ffffff !important;
+  color: #000000 !important;
 }
 
 .admin-scope [class~="border"][class~="border-paper"] {
-  border-radius: 8px;
+  border-color: #000000 !important;
+  border-radius: 0 !important;
 }
 
-/* Status chips built as small padded spans */
-.admin-scope [class*="px-2"][class*="py-1"] {
-  border-radius: 99px;
-}
-
-/* Page sections become reference panels: white sheet, hairline, 8px radius. */
-.admin-scope section {
-  background: #ffffff;
-  border: 1px solid var(--admin-line);
-  border-radius: 8px;
-  padding: 18px;
-}
-
-/* Flush divider grids (KPI strips, media tiles) become separate reference cards. */
+/* Hairline KPI Strip Grid */
 .admin-scope [class~="gap-px"][class~="bg-paper-a18"] {
-  background: transparent !important;
-  border: 0 !important;
-  gap: 12px !important;
+  background: rgba(0, 0, 0, 0.12) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  gap: 1px !important;
 }
 
-.admin-scope [class~="gap-px"][class~="bg-paper-a18"] > *:not(:hover) {
+.admin-scope [class~="gap-px"][class~="bg-paper-a18"] > * {
   background: #ffffff;
-  border: 1px solid var(--admin-line);
-  border-radius: 8px;
 }
 
-/* Analytics-style six-up KPI matrix becomes six reference cards. */
-.admin-scope [class*="lg:grid-cols-6"][class*="gap-6"] > * {
-  background: #ffffff;
-  border: 1px solid var(--admin-line) !important;
-  border-radius: 8px;
-  padding: 14px 16px !important;
-}
-
-/* ---- Tables -------------------------------------------------------------- */
+/* ---- Crisp Architectural Tables ------------------------------------------ */
 .admin-scope table {
   width: 100%;
   border-collapse: collapse;
@@ -2288,25 +2212,23 @@ select.field option {
 
 .admin-scope thead th {
   background: #fafafa;
-  border-top: 1px solid var(--admin-line);
-  border-bottom: 1px solid var(--admin-line);
-  color: #6a6a6a;
-  font-family: 'Instrument Sans', system-ui, sans-serif !important;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0;
-  text-transform: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  color: rgba(0, 0, 0, 0.56);
+  font-family: var(--font-mono-stack) !important;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   text-align: left;
-  padding: 9px 14px;
+  padding: 10px 14px;
   white-space: nowrap;
 }
 
 .admin-scope tbody td {
   padding: 11px 14px;
-  border-bottom: 1px solid var(--admin-line);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   font-size: 13px;
-  letter-spacing: 0;
-  text-transform: none;
   color: #000000;
   vertical-align: middle;
 }
@@ -2315,23 +2237,9 @@ select.field option {
   border-bottom: 0;
 }
 
-.admin-scope tbody tr:hover td {
-  background: #fafafa;
-}
-
 /* ---- Misc ---------------------------------------------------------------- */
-.admin-scope .admin-masthead,
-.admin-scope .admin-rail {
-  background-color: #ffffff !important;
-  background-image: none !important;
-}
-
 .admin-scope [class*="shadow"] {
   box-shadow: none !important;
-}
-
-.admin-scope [class*="bg-ink/80"] {
-  background-color: rgba(0, 0, 0, 0.35) !important;
 }
 
 .admin-scope ::selection {
@@ -2339,10 +2247,11 @@ select.field option {
   color: #ffffff;
 }
 
-/* Breathing room: reference pages sit on a 28px gutter */
 .admin-scope > * {
   max-width: none;
 }
+
+
 
 
 /* ==========================================================================
@@ -2635,9 +2544,8 @@ select.field option {
 }
 
 /* ==========================================================================
-   ADMIN AUTHENTICATION
-   Sign-in, terminal lock and restricted-access screens share the operations
-   language: paper canvas, white card, Instrument Sans/Serif, pill controls.
+   ADMIN AUTHENTICATION — CLOFADS PAPER-WHITE PERIMETER
+   Sign-in, lock screen, and restricted gates match the website monochrome room.
    ========================================================================== */
 .admin-scope.admin-auth-page {
   --color-ink: #000000;
@@ -2645,34 +2553,48 @@ select.field option {
   --color-ink-a88: rgba(0, 0, 0, 0.88);
   --color-ink-a72: rgba(0, 0, 0, 0.72);
   --color-ink-a64: rgba(0, 0, 0, 0.64);
-  --color-ink-a55: rgba(0, 0, 0, 0.55);
-  --color-ink-a45: rgba(0, 0, 0, 0.45);
-  --color-ink-a40: rgba(0, 0, 0, 0.4);
+  --color-ink-a55: rgba(0, 0, 0, 0.56);
+  --color-ink-a45: rgba(0, 0, 0, 0.5);
+  --color-ink-a40: rgba(0, 0, 0, 0.45);
   --color-ink-a20: rgba(0, 0, 0, 0.2);
   --color-ink-a18: rgba(0, 0, 0, 0.14);
-  --color-ink-a14: rgba(0, 0, 0, 0.1);
-  --color-ink-a10: rgba(0, 0, 0, 0.06);
+  --color-ink-a14: rgba(0, 0, 0, 0.11);
+  --color-ink-a10: rgba(0, 0, 0, 0.07);
   --color-ink-a06: rgba(0, 0, 0, 0.04);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f6f6f6 !important;
+  background: #ffffff !important;
+  color: #000000 !important;
 }
 
 .admin-auth-bar {
-  height: 60px;
+  height: 56px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 28px;
-  background: #ffffff;
-  border-bottom: 1px solid #ececec;
+  background: #ffffff !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 .admin-auth-bar .label {
-  color: #6a6a6a !important;
-  font-size: 11.5px !important;
+  color: rgba(0, 0, 0, 0.55) !important;
+  font-size: 10.5px !important;
+  letter-spacing: 0.16em !important;
+}
+
+.admin-auth-page .text-ink {
+  color: #000000 !important;
+}
+
+.admin-auth-page .border-ink {
+  border-color: #000000 !important;
+}
+
+.admin-auth-page .border-ink-a18 {
+  border-color: rgba(0, 0, 0, 0.14) !important;
 }
 
 .admin-auth-main {
@@ -2680,7 +2602,7 @@ select.field option {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 56px 24px;
+  padding: 40px 20px;
 }
 
 .admin-auth-panel {
@@ -2689,31 +2611,33 @@ select.field option {
 
 .admin-auth-card {
   width: 100%;
-  max-width: 520px;
+  max-width: 480px;
   margin: 0 auto;
-  background: #ffffff;
-  border: 1px solid #ececec;
-  border-radius: 12px;
-  padding: 40px;
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-top: 2px solid #000000;
+  border-radius: 0;
+  padding: 36px;
 }
 
 .admin-auth-card h1 {
-  font-size: 42px !important;
-  line-height: 1.06 !important;
+  font-size: 32px !important;
+  line-height: 1.05 !important;
+  color: #000000 !important;
 }
 
 .admin-auth-page .body-copy {
-  font-family: 'Instrument Sans', system-ui, sans-serif !important;
+  font-family: var(--font-ui-stack) !important;
   font-size: 13.5px !important;
-  line-height: 1.6 !important;
-  font-weight: 400 !important;
+  line-height: 1.65 !important;
+  font-weight: 300 !important;
   max-width: none !important;
-  color: #6a6a6a !important;
+  color: rgba(0, 0, 0, 0.65) !important;
 }
 
 .admin-auth-page .field {
-  height: 38px !important;
-  min-height: 38px !important;
+  height: 40px !important;
+  min-height: 40px !important;
 }
 
 .admin-auth-foot {
@@ -2721,30 +2645,29 @@ select.field option {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 28px;
-  background: #ffffff;
-  border-top: 1px solid #ececec;
-  font-size: 11.5px;
-  color: #6a6a6a;
+  padding: 14px 28px;
+  background: #fafafa;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.5);
 }
 
 @media (max-width: 640px) {
   .admin-auth-bar {
-    height: 54px;
+    height: 48px;
     padding: 0 16px;
   }
   .admin-auth-main {
-    padding: 24px 16px;
+    padding: 20px 16px;
   }
   .admin-auth-card {
     padding: 24px;
-    border-radius: 10px;
   }
   .admin-auth-card h1 {
-    font-size: 34px !important;
+    font-size: 26px !important;
   }
   .admin-auth-foot {
-    padding: 14px 16px;
+    padding: 12px 16px;
   }
 }
 
@@ -2765,15 +2688,4 @@ select.field option {
 .admin-scope .field-label[class~="flex"] {
   display: flex !important;
   align-items: center;
-}
-
-/* Technical pages were built with square micro-controls; the reference uses
-   pills for every action and status token. */
-.admin-scope button[class~="h-9"] {
-  border-radius: 99px !important;
-}
-
-.admin-scope span[class~="px-3"][class~="py-2"],
-.admin-scope span[class~="px-3"][class~="py-1.5"] {
-  border-radius: 99px !important;
 }

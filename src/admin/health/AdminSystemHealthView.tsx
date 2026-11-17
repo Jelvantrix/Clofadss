@@ -204,7 +204,7 @@ export const AdminSystemHealthView: React.FC = () => {
  deviceClass: 'desktop',
  verifiedBy: adminProfile?.email || user?.email || 'unknown-admin',
  metadata: {
- agent: 'Zejesh Production Health Guard',
+ agent: 'Clofads Production Health Guard',
  action: 'Round-Trip Verification',
  },
  };

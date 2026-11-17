@@ -1,7 +1,7 @@
 /**
  * House editorial imagery.
  *
- * These are the studio photographs supplied for the ZEJESH archive. They are
+ * These are the studio photographs supplied for the CLOFADS archive. They are
  * used as the current campaign set until the content library is populated
  * through the admin console.
  */

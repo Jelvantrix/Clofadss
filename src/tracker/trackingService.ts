@@ -1,5 +1,5 @@
 /**
- * Zejesh Quiet Nordic Luxury - Behavior Tracking Engine (M4)
+ * Clofads Quiet Nordic Luxury - Behavior Tracking Engine (M4)
  * Lightweight, strictly privacy-compliant, zero third-party scripts.
  * Runs ONLY after user gives analytics consent.
  * Anonymous visitorId and sessionId, no IP stored, no fingerprinting, honours Do Not Track.

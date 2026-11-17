@@ -6,6 +6,7 @@ interface FooterProps {
   onSetLanguage: (lang: Language) => void;
   onSelectCategory: (cat: string, sub?: string) => void;
   onNavigatePage: (route: any) => void;
+  onNavigateAdmin?: () => void;
   settings?: StoreSettings;
   dark?: boolean;
 }
@@ -49,7 +50,7 @@ const columns = [
   },
 ];
 
-export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onNavigatePage, dark = false }) => {
+export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onNavigatePage, onNavigateAdmin, dark = false }) => {
   const year = new Date().getFullYear();
   const stroke = dark ? '1px rgba(255,255,255,0.55)' : '1px rgba(0,0,0,0.55)';
 
@@ -63,7 +64,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onNavigatePage
       <div className="page-shell pt-16 md:pt-24">
         <div className="grid grid-cols-1 gap-14 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <span className="label text-[8px] text-ink-a40">ZEJESH — House of modern clothing</span>
+            <span className="label text-[8px] text-ink-a40">CLOFADS — House of modern clothing</span>
             <p className="mt-7 max-w-[22ch] font-display text-[clamp(30px,3vw,42px)] leading-[1.02] tracking-[-0.025em]">
               Dress the body.
               <br />
@@ -96,6 +97,17 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onNavigatePage
                       </button>
                     </li>
                   ))}
+                  {col.title === 'Care' && onNavigateAdmin && (
+                    <li>
+                      <button
+                        type="button"
+                        onClick={onNavigateAdmin}
+                        className="group relative inline-flex min-h-[26px] items-center text-[13px] font-light text-ink-a72 transition-colors duration-300 hover:text-ink"
+                      >
+                        Admin Console
+                      </button>
+                    </li>
+                  )}
                 </ul>
               </div>
             ))}
@@ -140,13 +152,13 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onNavigatePage
             e.currentTarget.style.setProperty('-webkit-text-stroke', stroke);
           }}
         >
-          ZEJESH
+          CLOFADS
         </h2>
       </div>
 
       <div className="page-shell flex flex-col gap-3 border-t border-ink-a14 py-5 sm:flex-row sm:items-center sm:justify-between">
         <span className="label text-[8px] text-ink-a40">
-          © {year} ZEJESH. All rights reserved.
+          © {year} CLOFADS. All rights reserved.
         </span>
         <div className="flex flex-wrap items-center gap-6 label text-[8px] text-ink-a40">
           <button type="button" onClick={() => onNavigatePage({ type: 'legal', slug: 'terms' })} className="hover:text-ink">

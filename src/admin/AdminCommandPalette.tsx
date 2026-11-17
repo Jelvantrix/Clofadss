@@ -1,5 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Search, X, Package, Layers, FolderTree, Image, ShoppingBag, Settings, Sparkles, ArrowRight, Gauge } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+  ArrowRight,
+  FolderTree,
+  Gauge,
+  Image,
+  Layers,
+  Package,
+  Search,
+  Settings,
+  ShoppingBag,
+  Sparkles,
+  X,
+} from 'lucide-react';
 import { Product } from '../types';
 
 interface AdminCommandPaletteProps {
@@ -22,22 +34,31 @@ export const AdminCommandPalette: React.FC<AdminCommandPaletteProps> = ({
   if (!isOpen) return null;
 
   const quickNav = [
-    { id: 'control', label: 'Control Plane', icon: Gauge },
-    { id: 'products', label: 'Products & Archive', icon: Package },
-    { id: 'collections', label: 'Collections & Drops', icon: Layers },
-    { id: 'categories', label: 'Categories', icon: FolderTree },
-    { id: 'media', label: 'Media Library', icon: Image },
-    { id: 'orders', label: 'Orders', icon: ShoppingBag },
-    { id: 'inventory', label: 'Inventory', icon: Package },
-    { id: 'customers', label: 'Customers', icon: Package },
-    { id: 'discounts', label: 'Discounts', icon: Package },
-    { id: 'analytics', label: 'Analytics', icon: Package },
-    { id: 'advisor', label: 'AI Advisor', icon: Sparkles },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'dashboard', group: 'Command', label: 'Overview · House Monitor', icon: Gauge },
+    { id: 'control', group: 'Command', label: 'Control Plane', icon: Gauge },
+    { id: 'health', group: 'Command', label: 'System Health', icon: Gauge },
+    { id: 'products', group: 'Catalogue', label: 'Products & Archive', icon: Package },
+    { id: 'collections', group: 'Catalogue', label: 'Collections & Drops', icon: Layers },
+    { id: 'categories', group: 'Catalogue', label: 'Categories', icon: FolderTree },
+    { id: 'media', group: 'Catalogue', label: 'Media Library', icon: Image },
+    { id: 'orders', group: 'Commerce', label: 'Order Book', icon: ShoppingBag },
+    { id: 'inventory', group: 'Commerce', label: 'Inventory Control', icon: Package },
+    { id: 'discounts', group: 'Commerce', label: 'Discounts & Privileges', icon: Package },
+    { id: 'customers', group: 'Clientele', label: 'Client Directory', icon: Package },
+    { id: 'waitlist', group: 'Clientele', label: 'Waitlists', icon: Package },
+    { id: 'suggestions', group: 'Clientele', label: 'Suggestions & Votes', icon: Sparkles },
+    { id: 'content', group: 'House', label: 'Hero Slides & CMS', icon: Layers },
+    { id: 'analytics', group: 'House', label: 'Analytics · 40 Trajectories', icon: Gauge },
+    { id: 'advisor', group: 'House', label: 'AI Executive Advisor', icon: Sparkles },
+    { id: 'atlas', group: 'House', label: 'System Atlas', icon: Layers },
+    { id: 'security', group: 'House', label: 'Security & Audit', icon: Settings },
+    { id: 'settings', group: 'House', label: 'Settings', icon: Settings },
   ];
 
-  const filteredNav = quickNav.filter((n) =>
-    n.label.toLowerCase().includes(query.toLowerCase())
+  const filteredNav = quickNav.filter(
+    (n) =>
+      n.label.toLowerCase().includes(query.toLowerCase()) ||
+      n.group.toLowerCase().includes(query.toLowerCase())
   );
 
   const filteredProducts = query.trim()
@@ -48,54 +69,74 @@ export const AdminCommandPalette: React.FC<AdminCommandPaletteProps> = ({
             p.name.fi.toLowerCase().includes(query.toLowerCase()) ||
             p.name.en.toLowerCase().includes(query.toLowerCase())
         )
-        .slice(0, 5)
+        .slice(0, 6)
     : [];
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-20 px-4">
-      <div onClick={onClose} className="fixed inset-0 bg-ink/80" />
+    <div className="fixed inset-0 z-[100] flex items-start justify-center px-4 pt-16">
+      <div
+        onClick={onClose}
+        className="fixed inset-0 bg-black/35 backdrop-blur-[1px]"
+      />
 
-      <div className="relative w-full max-w-2xl bg-ink border border-paper-a18 z-10 overflow-hidden animate-fadeIn">
+      <div className="relative z-10 w-full max-w-2xl overflow-hidden border border-black bg-white text-black animate-fadeIn">
         {/* Search Input */}
-        <div className="flex items-center px-5 py-4 bg-ink border-b border-paper-a18">
-          <Search className="w-4 h-4 text-paper-a45 mr-3" strokeWidth={1.4} />
+        <div className="flex items-center border-b border-black/15 bg-[#fafafa] px-4 py-3.5">
+          <Search className="mr-3 h-4 w-4 text-black/45" strokeWidth={1.5} />
           <input
             autoFocus
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search products, drops or actions..."
-            className="w-full text-[13px] font-light bg-transparent text-paper placeholder:text-paper-a45 outline-none tracking-[0.06em]"
+            placeholder="Jump to module, garment title, or SKU…"
+            className="!h-auto !border-0 !bg-transparent !p-0 text-[13.5px] text-black placeholder:text-black/40 outline-none w-full"
           />
-          <button onClick={onClose} className="p-1 text-paper-a45 hover:text-paper cursor-pointer transition-colors">
-            <X className="w-4 h-4" strokeWidth={1.4} />
+          <button
+            type="button"
+            onClick={onClose}
+            className="ml-2 p-1 text-black/45 transition-colors hover:text-black"
+            aria-label="Close command search"
+          >
+            <X className="h-4 w-4" strokeWidth={1.5} />
           </button>
         </div>
 
-        <div className="max-h-[60vh] overflow-y-auto">
+        <div className="max-h-[62vh] overflow-y-auto bg-white">
           {/* Matched Products */}
           {filteredProducts.length > 0 && (
-            <div className="border-b border-paper-a18 py-2">
-              <div className="px-5 py-2 micro-sm text-paper-a45">
-                Products ({filteredProducts.length})
+            <div className="border-b border-black/12">
+              <div className="border-b border-black/10 bg-[#fafafa] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-black/55">
+                Matching Garments ({filteredProducts.length})
               </div>
               {filteredProducts.map((p) => (
                 <button
                   key={p.id}
+                  type="button"
                   onClick={() => {
                     onSelectProduct(p);
                     onClose();
                   }}
-                  className="w-full px-5 py-3 text-left flex items-center justify-between hover:bg-paper hover:text-ink group transition-colors cursor-pointer"
+                  className="group flex w-full items-center justify-between border-b border-black/[0.06] px-4 py-2.5 text-left transition-colors hover:bg-[#fafafa] last:border-b-0"
                 >
-                  <div className="flex items-baseline gap-3">
-                    <span className="micro-sm font-mono">{p.nr || p.plateNumber}</span>
-                    <span className="text-[13px] font-light">{p.name.en || p.name.fi}</span>
-                    <span className="micro-sm text-paper-a45 group-hover:text-ink-a40">({p.name.fi})</span>
+                  <div className="flex min-w-0 items-baseline gap-3">
+                    <span className="shrink-0 font-mono text-[11px] text-black/55">
+                      {p.nr || p.plateNumber}
+                    </span>
+                    <span className="truncate text-[13px] text-black">
+                      {p.name.en || p.name.fi}
+                    </span>
+                    <span className="hidden truncate text-[11.5px] text-black/45 sm:inline">
+                      {p.name.fi}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="micro-sm font-mono">{p.price} €</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-paper-a18 group-hover:text-ink" strokeWidth={1.4} />
+                  <div className="flex shrink-0 items-center gap-3">
+                    <span className="font-mono text-[12px] tabular-nums text-black/75">
+                      {p.price} €
+                    </span>
+                    <ArrowRight
+                      className="h-3.5 w-3.5 text-black/35 transition-transform group-hover:translate-x-0.5 group-hover:text-black"
+                      strokeWidth={1.5}
+                    />
                   </div>
                 </button>
               ))}
@@ -103,36 +144,50 @@ export const AdminCommandPalette: React.FC<AdminCommandPaletteProps> = ({
           )}
 
           {/* Navigation Shortcuts */}
-          <div className="py-2">
-            <div className="px-5 py-2 micro-sm text-paper-a45">
-              Quick Navigation
+          <div>
+            <div className="border-b border-black/10 bg-[#fafafa] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-black/55">
+              Atelier Modules ({filteredNav.length})
             </div>
             {filteredNav.map((n) => {
               const Icon = n.icon;
               return (
                 <button
                   key={n.id}
+                  type="button"
                   onClick={() => {
                     onNavigateView(n.id);
                     onClose();
                   }}
-                  className="w-full px-5 py-2.5 text-left flex items-center justify-between hover:bg-paper hover:text-ink group transition-colors cursor-pointer"
+                  className="group flex w-full items-center justify-between border-b border-black/[0.06] px-4 py-2.5 text-left transition-colors hover:bg-[#fafafa] last:border-b-0"
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className="w-4 h-4 text-paper-a45 group-hover:text-ink" strokeWidth={1.4} />
-                    <span className="micro-sm">{n.label}</span>
+                    <span className="min-w-[74px] font-mono text-[10px] uppercase tracking-[0.12em] text-black/45">
+                      {n.group}
+                    </span>
+                    <Icon
+                      className="h-3.5 w-3.5 text-black/50 group-hover:text-black"
+                      strokeWidth={1.4}
+                    />
+                    <span className="text-[13px] text-black">{n.label}</span>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-paper-a18 group-hover:text-ink" strokeWidth={1.4} />
+                  <ArrowRight
+                    className="h-3.5 w-3.5 text-black/30 transition-transform group-hover:translate-x-0.5 group-hover:text-black"
+                    strokeWidth={1.5}
+                  />
                 </button>
               );
             })}
           </div>
         </div>
 
-        <div className="px-5 py-3 border-t border-paper-a18 bg-ink flex items-center justify-between micro-sm text-paper-a45">
-          <span>Click to select action or navigate</span>
-          <button onClick={onClose} className="hover:text-paper cursor-pointer transition-colors">
-            Close
+        <div className="flex items-center justify-between border-t border-black/10 bg-[#fafafa] px-4 py-2 font-mono text-[10.5px] text-black/55">
+          <span>Select a module or garment</span>
+          <button
+            type="button"
+            onClick={onClose}
+            className="uppercase tracking-[0.12em] hover:text-black"
+          >
+            Esc · Close
           </button>
         </div>
       </div>

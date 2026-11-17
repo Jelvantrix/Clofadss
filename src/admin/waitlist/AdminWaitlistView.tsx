@@ -57,7 +57,7 @@ export const AdminWaitlistView: React.FC<AdminWaitlistViewProps> = ({ waitlist, 
     const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
     const link = document.createElement('a');
     link.setAttribute('href', encodeURI(csvContent));
-    link.setAttribute('download', `zejesh_waitlist_${Date.now()}.csv`);
+    link.setAttribute('download', `clofads_waitlist_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

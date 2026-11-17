@@ -252,7 +252,7 @@ export const ProductListing: React.FC<ProductListingProps> = ({
             <div className="relative aspect-[2/3] md:col-span-5">
               <img
                 src={editorialAt(3)}
-                alt="ZEJESH archive study"
+                alt="CLOFADS archive study"
                 className="h-full w-full object-cover object-[center_20%] grayscale"
               />
               <span className="absolute left-5 top-5 label text-[9px] text-white mix-blend-difference">
