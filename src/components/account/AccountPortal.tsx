@@ -23,7 +23,6 @@ import type { AccountAddress, AccountOverview, Order, OrderStatus, Product } fro
 interface AccountPortalProps {
   user: User;
   onNavigateHome: () => void;
-  onNavigateAdmin: () => void;
   onNavigateArchive: () => void;
   wishlistProducts: Product[];
   onSelectProduct: (product: Product) => void;
@@ -95,14 +94,13 @@ const emptyAddress = (): AccountAddress => ({
 export const AccountPortal: React.FC<AccountPortalProps> = ({
   user,
   onNavigateHome,
-  onNavigateAdmin,
   onNavigateArchive,
   wishlistProducts,
   onSelectProduct,
   onOpenWishlist,
   onRemoveWishlist,
 }) => {
-  const { signOut, changePassword, isAdmin, isOwner } = useAuth();
+  const { signOut, changePassword } = useAuth();
   const [activeTab, setActiveTab] = useState<AccountTab>('overview');
   const [overview, setOverview] = useState<AccountOverview | null>(null);
   const [loading, setLoading] = useState(true);
@@ -144,9 +142,6 @@ export const AccountPortal: React.FC<AccountPortalProps> = ({
   useEffect(() => {
     void loadOverview();
   }, [loadOverview, user.id]);
-
-  const isExecutive =
-    user.email?.toLowerCase().trim() === 'huxaifa0fficial@gmail.com' || isAdmin || isOwner;
 
   const orders = overview?.orders || [];
   const orderCount = orders.length;
@@ -334,30 +329,6 @@ export const AccountPortal: React.FC<AccountPortalProps> = ({
                     A record of what you have collected, saved, and chosen to keep.
                   </p>
                 </div>
-
-                {isExecutive && (
-                  <div className="border border-ink p-6 sm:p-8">
-                    <div className="flex flex-wrap items-center justify-between gap-4">
-                      <div className="flex items-center gap-3">
-                        <ShieldCheck className="h-5 w-5" />
-                        <span className="label">Executive console ready</span>
-                      </div>
-                      <span className="label text-ink-a45">Owner authorisation</span>
-                    </div>
-                    <p className="mt-4 max-w-2xl text-[13px] leading-relaxed text-ink-a45">
-                      Master administrator authorisation recognised. Open the management terminal for
-                      catalogue, orders, inventory, telemetry, and control-plane operations.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={onNavigateAdmin}
-                      className="mt-6 inline-flex items-center gap-2 label border-b border-ink pb-1 transition-opacity hover:opacity-60"
-                    >
-                      Enter management terminal
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                )}
 
                 <div className="grid grid-cols-2 gap-px bg-ink-a18 border border-ink-a18 md:grid-cols-4">
                   {[
@@ -784,19 +755,6 @@ export const AccountPortal: React.FC<AccountPortalProps> = ({
                     </button>
                   </form>
                 </div>
-
-                {isExecutive && (
-                  <div className="border-t border-ink-a18 pt-8">
-                    <button
-                      type="button"
-                      onClick={onNavigateAdmin}
-                      className="label inline-flex items-center gap-2 border-b border-ink pb-1"
-                    >
-                      Open management terminal
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                )}
 
                 <div className="border-t border-ink-a18 pt-8">
                   <button

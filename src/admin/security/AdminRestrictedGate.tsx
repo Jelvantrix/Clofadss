@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShieldAlert, Lock, ArrowLeft, ArrowRight, UserCheck, LogOut } from 'lucide-react';
-import { useAuth, DESIGNATED_ADMIN_EMAIL } from '../../supabase/AuthContext';
+import { useAuth } from '../../supabase/AuthContext';
 
 interface AdminRestrictedGateProps {
   onGoToAuth: () => void;
@@ -59,8 +59,8 @@ export const AdminRestrictedGate: React.FC<AdminRestrictedGateProps> = ({
           </h1>
 
           <p className="text-[12.5px] text-black/60 leading-relaxed mb-7">
-            This management link requires an active designated administrator session.
-            Only <span className="text-black select-all font-mono text-[11.5px]">{DESIGNATED_ADMIN_EMAIL}</span> is permitted to access this console.
+            This management link requires an active administrator session. Only accounts with
+            an owner role in the private administrator roster may enter.
           </p>
 
           {user ? (
@@ -77,8 +77,8 @@ export const AdminRestrictedGate: React.FC<AdminRestrictedGateProps> = ({
                 {user.email}
               </p>
               <p className="micro-sm text-paper-a45 leading-relaxed normal-case tracking-[0.04em]">
-                This account does not have executive clearance. Please sign out and log in with{' '}
-                <span className="text-paper">{DESIGNATED_ADMIN_EMAIL}</span> on the main website.
+                This account does not have owner clearance. Sign out and use the private
+                administrator account.
               </p>
             </div>
           ) : (
@@ -88,9 +88,7 @@ export const AdminRestrictedGate: React.FC<AdminRestrictedGateProps> = ({
                 <span>No active admin session detected</span>
               </div>
               <p className="text-[12px] font-light text-paper-a72 leading-relaxed">
-                You must first log in with{' '}
-                <span className="text-paper">{DESIGNATED_ADMIN_EMAIL}</span> on the main website.
-                Once logged in, revisit this link to enter your terminal keys.
+                Sign in with the private administrator account, then reopen this console link.
               </p>
             </div>
           )}

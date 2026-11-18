@@ -84,9 +84,9 @@ export const Header: React.FC<HeaderProps> = ({
         transition: 'transform 800ms cubic-bezier(.76,0,.24,1), background-color 500ms ease, color 500ms ease',
       }}
     >
-      <div className="page-shell flex h-[var(--nav-h)] items-center justify-between gap-4">
+      <div className="page-shell relative flex h-[var(--nav-h)] items-center justify-between gap-4">
         {/* left — menu + search */}
-        <div className="flex flex-1 items-center gap-6">
+        <div className="flex min-w-0 flex-1 items-center gap-6">
           <button
             type="button"
             onClick={onOpenMobileMenu}
@@ -108,18 +108,18 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </div>
 
-        {/* centre — the mark */}
+        {/* centre — the mark, absolutely centred so side content can never shift it */}
         <button
           type="button"
           onClick={onNavigateHome}
-          className="flex min-h-[44px] shrink-0 items-center font-display text-[19px] leading-none tracking-[0.3em] sm:text-[22px] md:text-[24px]"
+          className="absolute left-1/2 top-1/2 flex min-h-[44px] -translate-x-1/2 -translate-y-1/2 items-center pl-[0.3em] font-display text-[19px] leading-none tracking-[0.3em] sm:text-[22px] md:text-[24px]"
           aria-label="CLOFADS — home"
         >
           CLOFADS
         </button>
 
         {/* right — services */}
-        <div className="flex flex-1 items-center justify-end gap-5 sm:gap-7">
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-4 sm:gap-7">
           <button
             type="button"
             onClick={onOpenWishlist}
@@ -130,7 +130,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={onOpenAccount}
-            className="flex min-h-[44px] items-center label text-[9px] opacity-60 transition-opacity duration-300 hover:opacity-100"
+            className="hidden min-h-[44px] items-center label text-[9px] opacity-60 transition-opacity duration-300 hover:opacity-100 sm:flex"
           >
             {user ? 'Account' : 'Sign In'}
           </button>
@@ -140,8 +140,7 @@ export const Header: React.FC<HeaderProps> = ({
             className="flex min-h-[44px] items-center gap-2 label text-[9px]"
             aria-label={t.nav.bag}
           >
-            <span className="hidden sm:inline">Bag</span>
-            <span className="sm:hidden">Bag</span>
+            <span>Bag</span>
             <span className="ml-1 font-mono text-[8px] tracking-normal opacity-60">{cartCount}</span>
           </button>
         </div>

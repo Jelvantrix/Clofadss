@@ -132,7 +132,7 @@ function rateLimit(max: number, bucket: string) {
 // Authentication
 // ---------------------------------------------------------------------------
 interface AuthedRequest extends express.Request {
-  admin?: { id: string; email: string; role: string };
+  admin?: { id: string; email: string; name?: string; role: string };
 }
 
 interface AuthedUserRequest extends express.Request {
@@ -261,12 +261,24 @@ async function requireAdmin(
       return res.status(401).json({ error: 'Invalid or expired session token.' });
     }
 
+    if (!userData.user.email_confirmed_at) {
+      recordDeniedAccess(req, {
+        eventType: 'admin.session.unconfirmed',
+        actorEmail: userData.user.email,
+        actorId: userData.user.id,
+        severity: 'high',
+        details: { reason: 'Administrator email is not confirmed.' },
+      });
+      return res.status(403).json({ error: 'Administrator email must be confirmed.' });
+    }
+
     const email = userData.user.email.toLowerCase().trim();
 
     const { data: adminRow, error: adminError } = await supabase
       .from('admins')
-      .select('id, email, role')
+      .select('id, email, name, role')
       .eq('email', email)
+      .eq('role', 'owner')
       .maybeSingle();
 
     if (adminError) {
@@ -455,9 +467,24 @@ export function createExpressApp(): express.Express {
 
   app.use(parseJson);
 
-  app.use((_req, res, next) => {
+  app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+    res.setHeader('X-DNS-Prefetch-Control', 'off');
+    if (process.env.NODE_ENV === 'production') {
+      res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+      res.setHeader(
+        'Content-Security-Policy',
+        "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https: wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+      );
+    }
+    if (req.path === '/admin' || req.path === '/admin/') {
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive');
+      res.setHeader('Cache-Control', 'no-store');
+    }
     next();
   });
 
@@ -706,6 +733,15 @@ export function createExpressApp(): express.Express {
   app.use('/api/commerce', createCheckoutRouter());
 
   app.use('/api', requireAdmin);
+
+  // Browser-safe confirmation of the current operator. The client uses this
+  // instead of reading public.admins directly, so role checks stay server-side.
+  app.get('/api/admin/session', (req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
+    const admin = (req as AuthedRequest).admin;
+    if (!admin) return res.status(401).json({ error: 'No administrator session.' });
+    return res.json({ admin });
+  });
 
   // Authenticated BOS dispatcher. Every action is declared in the registry with
   // an explicit permission; the dispatcher never reflects over object keys.

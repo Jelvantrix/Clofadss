@@ -22,6 +22,14 @@ export const isSupabaseConfigured: boolean =
   !supabaseUrl.includes('your-project') && supabaseAnonKey !== 'your-anon-key';
 
 /**
+ * The console may only open without a database during local development.
+ * A production build with missing credentials must fail closed, not fall
+ * back to an unauthenticated preview console.
+ */
+export const isLocalAdminPreview: boolean =
+  Boolean(metaEnv.DEV) && !isSupabaseConfigured;
+
+/**
  * Server-only privilege key.
  *
  * Deliberately NOT prefixed with `VITE_`: Vite only inlines `VITE_*` variables

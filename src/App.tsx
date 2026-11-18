@@ -19,8 +19,8 @@ import { Footer } from './components/Footer';
 import { StoryPage } from './components/StoryPage';
 import { CommunityVotePage } from './components/CommunityVotePage';
 import { LookbookView } from './components/LookbookView';
-import { AuthProvider, useAuth, DESIGNATED_ADMIN_EMAIL } from './supabase/AuthContext';
-import { isSupabaseConfigured } from './supabase/config';
+import { AuthProvider, useAuth } from './supabase/AuthContext';
+import { isLocalAdminPreview, isSupabaseConfigured } from './supabase/config';
 import { StorefrontDataProvider, useStorefrontData } from './context/StorefrontDataContext';
 import { AdminLayout } from './admin/AdminLayout';
 import { AdminRestrictedGate } from './admin/security/AdminRestrictedGate';
@@ -29,28 +29,16 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { forceUnlockBodyScroll } from './utils/scrollLock';
 import { Preloader } from './components/Preloader';
 
-export const ADMIN_SECRET_PATH = '/admin';
-export const ADMIN_SECRET_HASH = '#admin';
-export const ADMIN_LONG_VAULT_PATH = '/atelier-security-vault-huxaifa-official-jm942jd-enterprise-management-terminal-8492048102-restricted-console';
+const ADMIN_PATH = '/admin';
 
+/**
+ * The console has exactly one entry point and no visible storefront button.
+ * Knowing the URL grants nothing without a server-verified owner session.
+ */
 function isSecretAdminUrl(): boolean {
   if (typeof window === 'undefined') return false;
   const path = window.location.pathname.toLowerCase();
-  const hash = window.location.hash.toLowerCase();
-
-  return (
-    path === '/admin' ||
-    path === '/admin/' ||
-    hash === '#admin' ||
-    path === '/admin-console' ||
-    hash === '#admin-console' ||
-    path === '/terminal' ||
-    hash === '#terminal' ||
-    path === ADMIN_LONG_VAULT_PATH ||
-    path === `${ADMIN_LONG_VAULT_PATH}/` ||
-    hash === `#${ADMIN_LONG_VAULT_PATH}` ||
-    path.startsWith(ADMIN_LONG_VAULT_PATH)
-  );
+  return path === ADMIN_PATH || path === `${ADMIN_PATH}/`;
 }
 
 function parseCurrentUrlToRoute(): PageRoute {
@@ -110,7 +98,6 @@ function parseCurrentUrlToRoute(): PageRoute {
   if (raw === 'account' || raw === 'auth' || raw === 'login' || raw === 'signin') return { type: 'auth', mode: 'signin' };
   if (raw === 'signup' || raw === 'register') return { type: 'auth', mode: 'signup' };
   if (raw === 'forgot' || raw === 'forgot-password' || raw === 'recover') return { type: 'auth', mode: 'forgot' };
-  if (raw === 'admin-console' || raw === 'terminal') return { type: 'admin' };
 
   return { type: 'home' };
 }
@@ -136,7 +123,7 @@ function getRouteUrl(r: PageRoute): string {
     case 'account': return '/auth';
     case 'auth':
       return r.mode === 'signup' ? '/signup' : r.mode === 'forgot' ? '/forgot' : '/auth';
-    case 'admin': return ADMIN_SECRET_PATH;
+    case 'admin': return ADMIN_PATH;
     default: return '/';
   }
 }
@@ -146,14 +133,8 @@ function StorefrontApp() {
   const { user, isAdmin, isOwner, loading: authLoading } = useAuth();
   const [preloaderDone, setPreloaderDone] = useState(false);
 
-  // Check if current authenticated user is the designated admin (huxaifa0fficial@gmail.com)
-  const isDesignatedAdminLoggedIn = Boolean(
-    user && (
-      (user.email && user.email.toLowerCase().trim() === DESIGNATED_ADMIN_EMAIL.toLowerCase()) ||
-      isAdmin ||
-      isOwner
-    )
-  );
+  // Administrator status comes from the server-verified profile only.
+  const isDesignatedAdminLoggedIn = Boolean(user && (isAdmin || isOwner));
 
   // Pure English language (all other languages removed)
   const [language, setLanguage] = useState<Language>('en');
@@ -339,9 +320,51 @@ function StorefrontApp() {
       ? products.find((p) => p.id === route.productId) || products[0] || null
       : null;
 
-  // Enforce Administrator Access when Supabase is configured; allow local workspace preview when unconfigured
   if (route.type === 'admin') {
-    if (isSupabaseConfigured && authLoading) {
+    // Fail closed. A production deployment with no Supabase credentials must
+    // never render an unauthenticated preview console.
+    if (!isSupabaseConfigured && !isLocalAdminPreview) {
+      return (
+        <div className="admin-scope admin-auth-page">
+          <div className="admin-auth-bar">
+            <span className="label">CLOFADS · Atelier Console</span>
+            <span className="label">LOCKED</span>
+          </div>
+          <div className="admin-auth-main">
+            <div className="max-w-md text-center">
+              <h1 className="mb-3 font-display text-[30px] font-light">Console unavailable</h1>
+              <p className="text-[13px] leading-relaxed text-black/60">
+                The administrator console is disabled because this deployment has no
+                Supabase configuration. No preview or local bypass is available in production.
+              </p>
+              <button
+                type="button"
+                onClick={handleNavigateHome}
+                className="mt-6 label underline underline-offset-4"
+              >
+                Return to storefront
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Local development only, when deliberately running without a database.
+    if (!isSupabaseConfigured && isLocalAdminPreview) {
+      return (
+        <AdminLayout
+          previewMode
+          onBackToStorefront={() => {
+            window.history.pushState(null, '', '/');
+            navigateTo({ type: 'home' });
+          }}
+          onViewProductInStore={(p) => navigateTo({ type: 'product', productId: p.id })}
+        />
+      );
+    }
+
+    if (authLoading) {
       return (
         <div className="admin-scope admin-auth-page">
           <div className="admin-auth-bar">
@@ -355,14 +378,13 @@ function StorefrontApp() {
       );
     }
 
-    if (isSupabaseConfigured && !user) {
+    if (!user) {
       return (
         <ErrorBoundary componentName="AdminAuthView">
           <AuthPage
             adminIntent
             initialMode="signin"
             onNavigateHome={handleNavigateHome}
-            onNavigateAdmin={() => navigateTo({ type: 'admin' })}
             onOpenCart={() => setIsCartOpen(true)}
             onOpenWishlist={() => setIsWishlistOpen(true)}
           />
@@ -370,12 +392,12 @@ function StorefrontApp() {
       );
     }
 
-    if (isSupabaseConfigured && !isDesignatedAdminLoggedIn) {
+    if (!isDesignatedAdminLoggedIn) {
       return (
         <AdminRestrictedGate
           onGoToAuth={() => navigateTo({ type: 'admin' })}
           onBackToStorefront={() => {
-            if (window.location.hash.includes('admin') || window.location.pathname.includes('admin')) {
+            if (window.location.pathname.includes('admin')) {
               window.history.pushState(null, '', '/');
             }
             navigateTo({ type: 'home' });
@@ -386,7 +408,6 @@ function StorefrontApp() {
 
     return (
       <AdminLayout
-        previewMode={!isSupabaseConfigured}
         onBackToStorefront={() => {
           window.history.pushState(null, '', '/');
           navigateTo({ type: 'home' });
@@ -403,7 +424,6 @@ function StorefrontApp() {
         <AuthPage
           initialMode={route.mode ? route.mode : 'signin'}
           onNavigateHome={handleNavigateHome}
-          onNavigateAdmin={() => navigateTo({ type: 'admin' })}
           onOpenCart={() => setIsCartOpen(true)}
           onOpenWishlist={() => setIsWishlistOpen(true)}
           onNavigateArchive={() => navigateTo({ type: 'archive' })}
@@ -622,7 +642,6 @@ function StorefrontApp() {
           onSetLanguage={(lang) => setLanguage(lang)}
           onSelectCategory={handleSelectCategory}
           onNavigatePage={(r) => navigateTo(r)}
-          onNavigateAdmin={!isSupabaseConfigured ? () => navigateTo({ type: 'admin' }) : undefined}
           dark={route.type === 'home'}
         />
       </ErrorBoundary>
@@ -726,17 +745,6 @@ function StorefrontApp() {
       </ErrorBoundary>
 
       <CookieBanner language={language} />
-
-      {!isSupabaseConfigured && (
-        <button
-          type="button"
-          onClick={() => navigateTo({ type: 'admin' })}
-          className="fixed bottom-5 right-5 z-40 inline-flex h-9 items-center gap-2 border border-black bg-black px-3.5 font-mono text-[10px] uppercase tracking-[0.16em] text-white transition-colors hover:bg-neutral-800 whitespace-nowrap"
-        >
-          <span>Admin Console</span>
-          <span aria-hidden="true">→</span>
-        </button>
-      )}
     </div>
   );
 }

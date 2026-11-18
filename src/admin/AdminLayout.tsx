@@ -86,10 +86,11 @@ const LEGACY_TO_SCREEN: Record<string, string> = {
   '19': 'security',
 };
 
-export const AdminLayout: React.FC<AdminLayoutProps> = ({
+const AdminLayoutContent: React.FC<AdminLayoutProps & { onLock: () => void }> = ({
   onBackToStorefront,
   onViewProductInStore,
   previewMode = false,
+  onLock,
 }) => {
   const { adminProfile } = useAuth();
   const {
@@ -116,17 +117,6 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       setToastMessage('');
     }, 2800);
   }, []);
-
-  // Operations console lock gate: unlocked on local previewMode unless operator clicks Lock
-  const [isConsoleLocked, setIsConsoleLocked] = useState<boolean>(() => {
-    if (previewMode) return false;
-    const unlockedTs = sessionStorage.getItem('zejesh_sec_unlocked_ts');
-    if (unlockedTs) {
-      const elapsed = (Date.now() - parseInt(unlockedTs, 10)) / 1000 / 60;
-      if (elapsed < 15) return false;
-    }
-    return true;
-  });
 
   const [autoLockMinutes, setAutoLockMinutes] = useState<number>(() => {
     const saved = localStorage.getItem('zejesh_sec_autolock_mins');
@@ -176,24 +166,13 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   };
 
   const handleLockConsoleNow = useCallback(() => {
-    setIsConsoleLocked(true);
-    sessionStorage.removeItem('zejesh_sec_unlocked_ts');
     if (!previewMode) {
       void logAuditEvent(adminProfile?.email || 'admin', 'TERMINAL_LOCKED', 'Console Manual Lockout').finally(() =>
         refreshAuditLogs()
       );
     }
-  }, [adminProfile?.email, previewMode, refreshAuditLogs]);
-
-  const handleUnlockConsole = () => {
-    setIsConsoleLocked(false);
-    sessionStorage.setItem('zejesh_sec_unlocked_ts', Date.now().toString());
-    if (!previewMode) {
-      void logAuditEvent(adminProfile?.email || 'admin', 'TERMINAL_UNLOCKED', 'Security Gate Clearance').finally(() =>
-        refreshAuditLogs()
-      );
-    }
-  };
+    onLock();
+  }, [adminProfile?.email, onLock, previewMode, refreshAuditLogs]);
 
   // Inactivity Auto-Lock Detector
   const lastActivityRef = useRef<number>(Date.now());
@@ -208,11 +187,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     events.forEach((ev) => window.addEventListener(ev, resetTimer, { passive: true }));
 
     const checkInterval = setInterval(() => {
-      if (!isConsoleLocked) {
-        const elapsedMinutes = (Date.now() - lastActivityRef.current) / (1000 * 60);
-        if (elapsedMinutes >= autoLockMinutes) {
-          handleLockConsoleNow();
-        }
+      const elapsedMinutes = (Date.now() - lastActivityRef.current) / (1000 * 60);
+      if (elapsedMinutes >= autoLockMinutes) {
+        handleLockConsoleNow();
       }
     }, 15000);
 
@@ -220,7 +197,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       events.forEach((ev) => window.removeEventListener(ev, resetTimer));
       clearInterval(checkInterval);
     };
-  }, [autoLockMinutes, isConsoleLocked, previewMode, handleLockConsoleNow]);
+  }, [autoLockMinutes, previewMode, handleLockConsoleNow]);
 
   // Real production datasets
   const [orders, setOrders] = useState<Order[]>([]);
@@ -537,12 +514,6 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
   return (
     <>
-      <AdminSecurityGate
-        isLocked={isConsoleLocked}
-        onUnlock={handleUnlockConsole}
-        onExitToStore={onBackToStorefront}
-      />
-
       <ConsoleShell
         operatorName={operatorName}
         operatorEmail={operatorEmail}
@@ -638,4 +609,27 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       </div>
     </>
   );
+};
+
+/**
+ * The security gate sits outside the console tree. Nothing inside the console —
+ * data subscriptions, lists, or admin views — is mounted until the operator has
+ * re-entered their password. Locking unmounts the console again.
+ */
+export const AdminLayout: React.FC<AdminLayoutProps> = (props) => {
+  const [isUnlocked, setIsUnlocked] = useState(Boolean(props.previewMode));
+
+  const handleLock = useCallback(() => setIsUnlocked(false), []);
+
+  if (!props.previewMode && !isUnlocked) {
+    return (
+      <AdminSecurityGate
+        isLocked
+        onUnlock={() => setIsUnlocked(true)}
+        onExitToStore={props.onBackToStorefront}
+      />
+    );
+  }
+
+  return <AdminLayoutContent {...props} onLock={handleLock} />;
 };

@@ -10,9 +10,8 @@ import {
   CheckCircle2,
   Smartphone,
   Check,
-  HelpCircle,
 } from 'lucide-react';
-import { useAuth, DESIGNATED_ADMIN_EMAIL } from '../../supabase/AuthContext';
+import { useAuth } from '../../supabase/AuthContext';
 
 interface AdminSecurityGateProps {
   isLocked: boolean;
@@ -22,17 +21,6 @@ interface AdminSecurityGateProps {
 
 const MAX_FAILED_ATTEMPTS = 6;
 const LOCKOUT_DURATION_SECONDS = 15 * 60; // 15 minutes lockout on brute-force
-
-const MASTER_KEYS = [
-  'CLOFADS-VAULT-2026',
-  'CLOFADS-2026',
-  'ZEJESH-VAULT-2026',
-  'ZEJESH-2026',
-  'ADMIN-2026',
-  'admin2026',
-  'huxaifa-admin-key',
-  'huxaifa2026',
-];
 
 export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
   isLocked,
@@ -47,7 +35,6 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
   const [showKey, setShowKey] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successNotice, setSuccessNotice] = useState(false);
-  const [showKeyHint, setShowKeyHint] = useState(false);
 
   const [failedAttempts, setFailedAttempts] = useState(() => {
     const saved = localStorage.getItem('zejesh_sec_failed_attempts');
@@ -87,15 +74,19 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
     return `${mins}:${s < 10 ? '0' : ''}${s}`;
   };
 
-  const activeEmail = user?.email || DESIGNATED_ADMIN_EMAIL;
+  const activeEmail = user?.email || '';
 
   const handleVerifyKey = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (isLockoutActive || isVerifying) return;
 
-    const trimmedKey = terminalKeyInput.trim();
-    if (!trimmedKey) {
-      setErrorMsg('Please enter your terminal security key or account password.');
+    const password = terminalKeyInput.trim();
+    if (!activeEmail) {
+      setErrorMsg('No verified administrator session was found. Please sign in again.');
+      return;
+    }
+    if (!password) {
+      setErrorMsg('Please enter the password for the signed-in administrator account.');
       return;
     }
 
@@ -103,32 +94,14 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
     setErrorMsg('');
 
     try {
-      // 1. Check custom configured admin terminal key from localStorage
-      const customKey = localStorage.getItem('zejesh_admin_terminal_key');
-      const isCustomMatch = customKey && customKey.trim() === trimmedKey;
-
-      // 2. Check predefined master vault keys
-      const isMasterKeyMatch = MASTER_KEYS.includes(trimmedKey);
-
-      if (isCustomMatch || isMasterKeyMatch) {
+      // Re-authenticate against Supabase. There are deliberately no recovery
+      // keys or client-side bypasses: the password and MFA are the only path.
+      const result = await signIn(activeEmail, password);
+      if (result.success && result.isAdmin) {
         setFailedAttempts(0);
         localStorage.removeItem('zejesh_sec_failed_attempts');
         localStorage.removeItem('zejesh_sec_lockout_until');
-        setSuccessNotice(true);
-        setTimeout(() => {
-          setTerminalKeyInput('');
-          setSuccessNotice(false);
-          onUnlock();
-        }, 400);
-        return;
-      }
-
-      // 3. Fallback: try authenticating with the Supabase account password for this admin
-      const result = await signIn(activeEmail, trimmedKey);
-      if (result.success) {
-        setFailedAttempts(0);
-        localStorage.removeItem('zejesh_sec_failed_attempts');
-        localStorage.removeItem('zejesh_sec_lockout_until');
+        localStorage.removeItem('zejesh_admin_terminal_key');
 
         if (result.requiresMfa) {
           setStep('mfa');
@@ -153,12 +126,12 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
           setErrorMsg('Maximum failed clearance attempts exceeded. Console locked for 15 minutes.');
         } else {
           setErrorMsg(
-            `Invalid terminal key or password. (${MAX_FAILED_ATTEMPTS - nextAttempts} attempts remaining)`
+            `Invalid administrator password. (${MAX_FAILED_ATTEMPTS - nextAttempts} attempts remaining)`
           );
         }
       }
     } catch {
-      setErrorMsg('Verification error. Please verify the terminal key.');
+      setErrorMsg('Verification error. Please try again.');
     } finally {
       setIsVerifying(false);
     }
@@ -224,12 +197,12 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
               Administrative Session Verified
             </span>
             <h1 className="mb-2.5 font-display text-[28px] font-light leading-[1.1] text-black">
-              {step === 'mfa' ? 'Two-Factor Verification' : 'Enter Console Passkey'}
+              {step === 'mfa' ? 'Two-Factor Verification' : 'Confirm Your Password'}
             </h1>
             <p className="mx-auto max-w-xs text-[12.5px] leading-relaxed text-black/60">
               {step === 'mfa'
                 ? 'Enter the 6-digit TOTP code from your authenticator application.'
-                : 'Enter your atelier security passkey or account password to unlock operations.'}
+                : 'Re-enter the password for the signed-in administrator account. There is no master key or bypass.'}
             </p>
           </div>
 
@@ -312,26 +285,16 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
                 }}
                 className="btn-text w-full justify-center pt-2"
               >
-                ← Back to Security Key
+                ← Back to password
               </button>
             </form>
           ) : (
             <form onSubmit={handleVerifyKey} className="space-y-6">
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="field-label flex items-center gap-1.5 !mb-0">
-                    <Key className="w-3.5 h-3.5" strokeWidth={1.4} />
-                    <span>Atelier console passkey</span>
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setShowKeyHint(!showKeyHint)}
-                    className="micro-sm text-paper-a45 hover:text-paper flex items-center gap-1 cursor-pointer transition-colors"
-                  >
-                    <HelpCircle className="w-3 h-3" strokeWidth={1.4} />
-                    <span>Key Help</span>
-                  </button>
-                </div>
+                <label className="field-label flex items-center gap-1.5 mb-2">
+                  <Key className="w-3.5 h-3.5" strokeWidth={1.4} />
+                  <span>Administrator password</span>
+                </label>
 
                 <div className="relative">
                   <input
@@ -341,7 +304,7 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
                     autoComplete="current-password"
                     value={terminalKeyInput}
                     onChange={(e) => setTerminalKeyInput(e.target.value)}
-                    placeholder="Enter console key or password..."
+                    placeholder="Enter your account password..."
                     disabled={isVerifying}
                     className="field pr-10"
                   />
@@ -350,31 +313,12 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
                     onClick={() => setShowKey(!showKey)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-paper-a45 hover:text-paper cursor-pointer transition-colors"
                     tabIndex={-1}
-                    aria-label={showKey ? 'Hide key' : 'Show key'}
+                    aria-label={showKey ? 'Hide password' : 'Show password'}
                   >
                     {showKey ? <EyeOff className="w-4 h-4" strokeWidth={1.4} /> : <Eye className="w-4 h-4" strokeWidth={1.4} />}
                   </button>
                 </div>
               </div>
-
-              {/* Collapsible Key Hint */}
-              {showKeyHint && (
-                <div className="p-4 border border-paper-a18 micro-sm text-paper-a72 space-y-2 animate-fadeIn">
-                  <span className="micro-sm text-paper-a45 block">Accepted keys</span>
-                  <p className="text-[13px] font-light normal-case tracking-[0.04em] leading-relaxed">
-                    You can enter your Supabase account password, or the master vault key:{' '}
-                    <span
-                      onClick={() => {
-                        setTerminalKeyInput('CLOFADS-VAULT-2026');
-                        setShowKeyHint(false);
-                      }}
-                      className="text-paper underline underline-offset-4 cursor-pointer font-mono"
-                    >
-                      CLOFADS-VAULT-2026
-                    </span>
-                  </p>
-                </div>
-              )}
 
               {errorMsg && (
                 <div className="p-3 border border-dashed border-paper-a18 micro-sm text-paper flex items-start gap-2">
@@ -386,7 +330,7 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
               {successNotice && (
                 <div className="p-3 border border-paper-a18 micro-sm text-paper flex items-center gap-2">
                   <Check className="w-4 h-4 shrink-0" strokeWidth={1.4} />
-                  <span>Key verified. Decrypting Studio Console...</span>
+                  <span>Password verified. Opening the console…</span>
                 </div>
               )}
 
@@ -396,13 +340,13 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
                 className="btn btn-primary w-full !min-h-[48px] disabled:opacity-40"
               >
                 <Lock className="w-3.5 h-3.5" strokeWidth={1.4} />
-                <span>{isVerifying ? 'Verifying Key...' : 'Unlock Atelier Console'}</span>
+                <span>{isVerifying ? 'Verifying…' : 'Unlock Console'}</span>
               </button>
 
               <div className="pt-2 text-center">
                 <span className="micro-sm text-paper-a45 flex items-center justify-center gap-1.5">
                   <CheckCircle2 className="w-3.5 h-3.5" strokeWidth={1.4} />
-                  <span>256-bit encryption · Inactivity autolock active</span>
+                  <span>Server-verified session · Inactivity autolock active</span>
                 </span>
               </div>
             </form>

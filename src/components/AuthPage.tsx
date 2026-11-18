@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ShieldCheck,
   Eye,
   EyeOff,
-  Check,
   AlertCircle,
   ArrowRight,
   ArrowLeft,
-  Copy,
   CheckCircle2,
   RefreshCw,
   LogOut,
@@ -15,8 +12,7 @@ import {
   Heart,
   Key,
 } from 'lucide-react';
-import { useAuth, DESIGNATED_ADMIN_EMAIL } from '../supabase/AuthContext';
-import { ADMIN_SECRET_PATH } from '../App';
+import { useAuth } from '../supabase/AuthContext';
 import { editorialAt } from '../editorial';
 import type { Product } from '../types';
 
@@ -24,7 +20,6 @@ interface AuthPageProps {
   initialMode?: 'signin' | 'signup' | 'forgot';
   adminIntent?: boolean;
   onNavigateHome: () => void;
-  onNavigateAdmin: () => void;
   onOpenCart?: () => void;
   onOpenWishlist?: () => void;
   onNavigateArchive?: () => void;
@@ -39,7 +34,6 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   initialMode = 'signin',
   adminIntent = false,
   onNavigateHome,
-  onNavigateAdmin,
   onOpenCart,
   onOpenWishlist,
   cartCount = 0,
@@ -76,7 +70,6 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [resendMessage, setResendMessage] = useState('');
-  const [copiedPath, setCopiedPath] = useState(false);
 
   // Password change state (for logged in patrons)
   const [newPassword, setNewPassword] = useState('');
@@ -298,16 +291,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     }
   };
 
-  const handleCopyAdminPath = () => {
-    if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(ADMIN_SECRET_PATH);
-      setCopiedPath(true);
-      setTimeout(() => setCopiedPath(false), 2500);
-    }
-  };
-
-  const isUserDesignatedAdmin =
-    user?.email?.toLowerCase().trim() === DESIGNATED_ADMIN_EMAIL.toLowerCase() || isAdmin || isOwner;
+  const isAdministrator = isAdmin || isOwner;
 
   const modeHeading = {
     signin: adminIntent ? (
@@ -557,66 +541,12 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   </p>
                 </div>
 
-                {/* VIP Executive Access: Only visible when signed in as huxaifa0fficial@gmail.com */}
-                {isUserDesignatedAdmin && (
-                  <div className="border border-ink-a18 p-6 sm:p-8 space-y-5">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <div className="flex items-center gap-2.5">
-                        <ShieldCheck className="w-5 h-5 text-ink" />
-                        <span className="label text-ink">Executive Console Ready</span>
-                      </div>
-                      <span className="label text-ink-a45">Owner Authorization</span>
-                    </div>
-
-                    <p className="body-copy text-ink-a45">
-                      Master administrator authorization recognized. Access catalog engineering,
-                      inventory stock, orders, and studio telemetry.
-                    </p>
-
-                    <button
-                      type="button"
-                      onClick={onNavigateAdmin}
-                      className="w-full btn btn-primary group"
-                    >
-                      <span>Enter Atelier Management Terminal</span>
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </button>
-
-                    {/* Direct Terminal URL */}
-                    <div className="pt-4 border-t border-ink-a18 space-y-2">
-                      <div className="flex items-center justify-between gap-4">
-                        <span className="label text-ink-a45">Direct Terminal Path</span>
-                        <button
-                          type="button"
-                          onClick={handleCopyAdminPath}
-                          className="flex items-center gap-1.5 label text-ink-a72 hover:text-ink underline underline-offset-4 cursor-pointer"
-                        >
-                          {copiedPath ? (
-                            <>
-                              <Check className="w-3 h-3" />
-                              <span>Copied</span>
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="w-3 h-3" />
-                              <span>Copy Path</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-                      <div className="font-mono text-[12px] tracking-[0.1em] break-all select-all text-ink-a72">
-                        {ADMIN_SECRET_PATH}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
                 {/* Patron Metrics: borderless typographic grid */}
                 <div className="grid grid-cols-2 gap-6 py-6 border-y border-ink-a18">
                   <div className="space-y-2">
                     <span className="label text-ink-a45 block">Patron Status</span>
                     <span className="text-[13px] tracking-[0.04em] text-ink">
-                      {isUserDesignatedAdmin ? 'Executive Administrator' : 'Verified Patron'}
+                      {isAdministrator ? 'Administrator' : 'Verified Patron'}
                     </span>
                   </div>
                   <div className="space-y-2">
@@ -838,7 +768,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   <p className="body-copy text-ink-a45">
                     {mode === 'signin' &&
                       (adminIntent
-                        ? 'Sign in with the designated administrator account to open the management terminal.'
+                        ? 'Sign in with the private administrator account to continue.'
                         : 'Sign in with your email to view order allocations, reserve pieces, and access your patron profile.')}
                     {mode === 'signup' &&
                       'Register with the atelier to establish your patron credentials and access archival drops.'}

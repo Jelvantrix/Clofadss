@@ -5,8 +5,6 @@ import { AdminUser } from '../types';
 
 export type AdminRole = 'owner' | 'editor' | 'viewer';
 
-export const DESIGNATED_ADMIN_EMAIL = 'huxaifa0fficial@gmail.com';
-
 interface AuthContextType {
   user: User | null;
   session: Session | null;
@@ -56,46 +54,37 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 /**
- * Loads the caller's administrative role.
+ * Resolve the administrator profile through the server.
  *
- * Recognized admins include:
- * 1. The designated executive administrator: huxaifa0fficial@gmail.com
- * 2. Any user registered in `public.admins` with role === 'owner'
+ * The browser must never decide who is an administrator. The API verifies the
+ * Supabase JWT, requires a confirmed email, and requires an owner row in
+ * public.admins. If that check cannot run, access fails closed.
  */
-async function loadAdminProfile(user: User): Promise<AdminUser | null> {
+async function loadAdminProfile(accessToken?: string | null): Promise<AdminUser | null> {
+  if (!accessToken) return null;
+
   try {
-    const email = user.email?.toLowerCase().trim();
-    if (!email) return null;
+    const response = await fetch('/api/admin/session', {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${accessToken}` },
+      cache: 'no-store',
+      credentials: 'same-origin',
+    });
 
-    // Check designated admin email requested by user
-    if (email === DESIGNATED_ADMIN_EMAIL.toLowerCase()) {
-      return {
-        id: user.id,
-        uid: user.id,
-        email: user.email!,
-        name: (user.user_metadata?.full_name as string) || 'Huxaifa (Executive Administrator)',
-        role: 'owner',
-      };
-    }
+    if (!response.ok) return null;
 
-    const { data, error } = await supabase.from('admins').select('*');
-    if (error || !Array.isArray(data)) return null;
+    const payload = (await response.json().catch(() => null)) as
+      | { admin?: { id?: string; email?: string; name?: string; role?: string } }
+      | null;
+    const admin = payload?.admin;
 
-    const row = data.find(
-      (r: { email?: string | null }) => (r.email || '').toLowerCase().trim() === email
-    ) as { id?: string; uid?: string; email: string; name: string; role: string } | undefined;
-
-    if (!row) return null;
-
-    const role = row.role as AdminRole;
-    // Strict requirement: Only 'owner' is permitted administrative access
-    if (role !== 'owner') return null;
+    if (!admin?.email || admin.role !== 'owner') return null;
 
     return {
-      id: row.id || row.uid || user.id,
-      uid: row.uid || user.id,
-      email: row.email,
-      name: row.name,
+      id: admin.id || admin.email,
+      uid: admin.id || admin.email,
+      email: admin.email,
+      name: admin.name || admin.email,
       role: 'owner',
     };
   } catch {
@@ -129,7 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setSession(next);
     setUser(next?.user ?? null);
     if (next?.user) {
-      const profile = await loadAdminProfile(next.user);
+      const profile = await loadAdminProfile(next.access_token);
       setAdminProfile(profile);
       await checkAalStatus();
     } else {
@@ -198,7 +187,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return { success: false, error: error.message || 'Invalid email or password.' };
         }
 
-        const profile = await loadAdminProfile(data.user);
+        const profile = await loadAdminProfile(data.session?.access_token);
         const userIsAdmin = Boolean(profile && profile.role === 'owner');
 
         // Check if MFA is required for admin
@@ -252,7 +241,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (data.session && data.user) {
           setSession(data.session);
           setUser(data.user);
-          const profile = await loadAdminProfile(data.user);
+          const profile = await loadAdminProfile(data.session.access_token);
           setAdminProfile(profile);
           return {
             success: true,
